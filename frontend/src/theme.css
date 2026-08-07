@@ -1,0 +1,316 @@
+:root {
+  --bg: #0c1420;
+  --bg-vignette: #101b2c;
+
+  --card-bg: #141f31;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --panel-bg: rgba(255, 255, 255, 0.04);
+  --panel-border: rgba(255, 255, 255, 0.07);
+
+  --accent: #57c7e8;
+  --accent-dark: #3aa3c4;
+  --accent-soft: rgba(87, 199, 232, 0.16);
+  --accent-contrast: #06141f;
+
+  --highlight-bg: rgba(110, 150, 200, 0.32);
+
+  --text-primary: #f2f6ff;
+  --text-secondary: #93a4bd;
+  --text-muted: #5f7089;
+
+  --success: #7fe3ac;
+  --success-bg: rgba(127, 227, 172, 0.14);
+  --danger: #f0908c;
+  --danger-bg: rgba(240, 144, 140, 0.14);
+
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: -apple-system, "Pretendard", "Apple SD Gothic Neo", "Segoe UI",
+    "Malgun Gothic", sans-serif;
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 16px;
+
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 1.3px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.3) 1px, transparent 1.2px),
+    radial-gradient(ellipse at 50% 0%, var(--bg-vignette) 0%, var(--bg) 65%);
+  background-size: 90px 90px, 130px 130px, 100% 100%;
+  background-position: 0 0, 45px 60px, 0 0;
+  background-attachment: fixed;
+  background-repeat: repeat, repeat, no-repeat;
+
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  padding: 40px 20px 80px;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+p {
+  margin: 0.4em 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.app-shell {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+}
+
+.app-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.quiz-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  padding: 32px 28px;
+  overflow: hidden;
+}
+
+.quiz-card::before,
+.quiz-card::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.quiz-card::before {
+  top: 22px;
+  right: 36px;
+}
+
+.quiz-card::after {
+  bottom: 96px;
+  right: 22px;
+  width: 3px;
+  height: 3px;
+}
+
+.quiz-card--empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.exercise-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+}
+
+.quiz-sentence {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.blank {
+  display: inline-block;
+  min-width: 3.2em;
+  height: 1.05em;
+  margin: 0 3px;
+  vertical-align: -0.18em;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px 6px 0 0;
+  border-bottom: 3px solid var(--accent);
+  color: transparent;
+}
+
+.translation-box {
+  position: relative;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+.translation-highlight {
+  display: inline-block;
+  padding: 2px 10px;
+  margin: 0 2px;
+  border-radius: var(--radius-sm);
+  background: var(--highlight-bg);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.mic-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--accent-soft);
+  border: 1.5px solid var(--accent-dark);
+  border-radius: var(--radius-pill);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.mic-button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.mic-button--listening {
+  animation: mic-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(87, 199, 232, 0.35); }
+  50% { box-shadow: 0 0 0 12px rgba(87, 199, 232, 0); }
+}
+
+.mic-error {
+  margin-top: 10px;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.manual-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.manual-input-row input {
+  flex: 1;
+  padding: 14px 18px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-pill);
+  background: var(--panel-bg);
+  color: var(--text-primary);
+}
+
+.manual-input-row input::placeholder {
+  color: var(--text-muted);
+}
+
+.submit-button {
+  padding: 14px 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--accent-soft);
+  border: 1.5px solid var(--accent-dark);
+  border-radius: var(--radius-pill);
+}
+
+.feedback-banner {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+}
+
+.feedback-banner--correct {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.feedback-banner--wrong {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.feedback-verdict {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.feedback-text {
+  color: var(--text-primary);
+}
+
+.next-button {
+  margin-top: 12px;
+  padding: 10px 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-pill);
+}
+
+.cost-hud {
+  position: fixed;
+  right: 24px;
+  top: 24px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  min-width: 190px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.cost-hud p {
+  margin: 6px 0;
+}
+
+.cost-hud__title {
+  color: var(--accent);
+}
+
+.cost-hud__note {
+  color: var(--success);
+  font-size: 0.85rem;
+}

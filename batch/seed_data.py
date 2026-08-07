@@ -1,6 +1,6 @@
 SAMPLE_CONVERSATIONS = [
     {"id": "conv_01", "title": "Morning routine", "transcript": [
-        "I usually feel tired after work.",
+        "I totally zoned out halfway through the meeting.",
         "Yeah, me too. I barely have energy to cook dinner.",
         "I've been trying to go to bed earlier, but it's not working.",
         "Same here. I keep scrolling on my phone until midnight."]},

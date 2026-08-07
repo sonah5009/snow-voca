@@ -7,7 +7,8 @@ on to with about after before until while is am are was were be been being do do
 not no yes very just really too also can could would should will shall may might must
 have has had get got there here what when where who how do don't didn't it's i'm i've""".split())
 
-PHRASAL = {"figure out", "look at", "count me in", "stay home", "go to bed", "wake up"}
+PHRASAL = {"figure out", "look at", "count me in", "stay home", "go to bed", "wake up",
+           "zoned out", "keep scrolling", "check", "leave earlier"}
 
 def pick_blank(sentence: str) -> str:
     low = sentence.lower()

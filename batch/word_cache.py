@@ -1,10 +1,10 @@
 import json, os
 from batch.lemma import lemmatize
 from common.sf import exec_sql
-from cortex.client import messages, text_of, parse_json_block
+from llm.client import messages, text_of, parse_json_block
 from measure.meter import metered_call, COUNTERS
 
-CHEAP = os.getenv("MODEL_CHEAP", "claude-haiku-4-5")
+CHEAP = os.getenv("MODEL_CHEAP", "gpt-5-mini")
 _MEM = {}   # SQL이 죽어도 세션 내 캐시는 동작해야 한다
 
 WORD_PROMPT = """Return ONLY JSON for the English word or phrase below.

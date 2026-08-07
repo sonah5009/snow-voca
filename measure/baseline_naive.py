@@ -8,12 +8,12 @@
 """
 import os, json
 from batch.seed_data import SAMPLE_CONVERSATIONS, RAW_ATTEMPT_LOG
-from cortex.client import messages, text_of
+from llm.client import messages, text_of
 from measure.meter import metered_call
 from dotenv import load_dotenv
 load_dotenv()
 
-NAIVE = os.getenv("MODEL_NAIVE", "claude-opus-4-5")
+NAIVE = os.getenv("MODEL_NAIVE", "gpt-5.6-sol")
 
 PROMPT = """You are an English learning content generator for Korean learners.
 Given one English sentence, do all of the following and return ONLY JSON:

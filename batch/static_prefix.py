@@ -17,6 +17,10 @@ FEWSHOT = [
     ("Sorry I'm late, the traffic was terrible today.", "늦어서 미안해, 오늘 교통이 정말 최악이었어."),
     ("Would you like that with oat milk or regular?", "오트밀크로 드릴까요, 아니면 일반 우유로 드릴까요?"),
     ("That happens a lot around this time, doesn't it?", "이맘때면 자주 그러지, 그렇지 않아?"),
+    ("I barely have energy to cook dinner.", "저녁 해 먹을 기운도 거의 없어."),
+    ("I keep scrolling on my phone until midnight.", "자정까지 계속 폰만 보고 있어."),
+    ("Not yet, I was about to when you called.", "아직, 네가 전화했을 때 막 하려던 참이었어."),
+    ("That sounds great, count me in.", "좋다, 나도 낄게."),
 ]
 
 def build_static_prefix() -> str:

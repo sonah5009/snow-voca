@@ -1,5 +1,5 @@
 import os, json
-from cortex.client import messages, text_of
+from llm.client import messages, text_of
 from dotenv import load_dotenv
 load_dotenv()
 

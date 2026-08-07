@@ -1,16 +1,16 @@
-"""USD per 1M tokens. Snowflake 가이드의 예시 rate 기준.
-실제 값은 Snowflake Service Consumption Table을 따르므로, 덱에는 '예시 단가 기준 추정'으로 명시한다."""
+"""USD per 1M tokens. 출처: OpenAI 공개 단가표 (developers.openai.com/api/docs/pricing).
+덱에는 '2026-08 기준 공개 단가'로 명시한다."""
 
 PRICES = {
-    "claude-haiku-4-5":  {"input": 1.00, "cache_read": 0.10, "output":  5.00},
-    "claude-sonnet-4-5": {"input": 3.00, "cache_read": 0.30, "output": 15.00},
-    "claude-sonnet-4-6": {"input": 3.00, "cache_read": 0.30, "output": 15.00},
-    "claude-opus-4-5":   {"input": 5.00, "cache_read": 0.50, "output": 25.00},
-    "openai-gpt-5":      {"input": 1.25, "cache_read": 0.13, "output": 10.00},
-    # 캐싱 미지원 (Table 6c)
-    "llama4-maverick":   {"input": 0.24, "cache_read": 0.24, "output":  0.97},
-    "llama3.3-70b":      {"input": 0.72, "cache_read": 0.72, "output":  0.72},
-    "mistral-large2":    {"input": 2.00, "cache_read": 2.00, "output":  6.00},
+    "gpt-5.6-sol":   {"input": 5.00, "cache_read": 0.50, "output": 30.00},
+    "gpt-5.6-terra": {"input": 2.00, "cache_read": 0.20, "output": 12.00},
+    "gpt-5.6-luna":  {"input": 0.20, "cache_read": 0.02, "output":  1.20},
+    "gpt-5.4":       {"input": 2.50, "cache_read": 0.25, "output": 15.00},
+    "gpt-5.4-mini":  {"input": 0.75, "cache_read": 0.075, "output": 4.50},
+    "gpt-5.4-nano":  {"input": 0.20, "cache_read": 0.02, "output":  1.25},
+    "gpt-5":         {"input": 1.25, "cache_read": 0.125, "output": 10.00},
+    "gpt-5-mini":    {"input": 0.25, "cache_read": 0.025, "output": 2.00},
+    "gpt-5-nano":    {"input": 0.05, "cache_read": 0.005, "output": 0.40},
 }
 FALLBACK = {"input": 2.00, "cache_read": 0.20, "output": 8.00}
 

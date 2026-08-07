@@ -1,3 +1,6 @@
+import json
+import pathlib
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -9,21 +12,34 @@ from gateway.grader import grade
 from gateway.session_cache import SessionCache
 from measure.meter import COUNTERS
 
+GENERATED = pathlib.Path("results/exercises.json")
+REVIEW_DELAY = 3   # 오답은 3문제 뒤에 다시 등장한다 ("next few questions")
 
 app = FastAPI(title="SnowVoca Cost-Efficient Gateway")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 session = SessionCache()
-exercises = []
-attempted = set()
 
-for conv in SAMPLE_CONVERSATIONS:
-    for index, sentence in enumerate(conv["transcript"]):
-        blank = pick_blank(sentence)
-        exercises.append({"id": f"{conv['id']}_{index:02d}", "sentence": sentence,
-                          "blank_word": blank, "lemma": lemmatize(blank),
-                          "meaning_correct": "핵심 단어의 뜻", "meaning_distractors": ["기다리다", "빌리다", "설명하다"],
-                          "difficulty": "medium", "in_review": False})
+
+def load_exercises():
+    if GENERATED.exists():
+        data = json.loads(GENERATED.read_text(encoding="utf-8"))
+        return {e["id"]: e for e in data}
+    exercises = {}
+    for conv in SAMPLE_CONVERSATIONS:
+        for index, sentence in enumerate(conv["transcript"]):
+            blank = pick_blank(sentence)
+            ex_id = f"{conv['id']}_{index:02d}"
+            exercises[ex_id] = {
+                "id": ex_id, "sentence": sentence, "blank_word": blank,
+                "lemma": lemmatize(blank), "meaning_correct": "핵심 단어의 뜻",
+                "meaning_distractors": ["기다리다", "빌리다", "설명하다"], "difficulty": "medium",
+            }
+    return exercises
+
+
+exercises = load_exercises()
+queue = list(exercises.keys())
 
 
 class AnswerRequest(BaseModel):
@@ -32,26 +48,30 @@ class AnswerRequest(BaseModel):
 
 @app.get("/exercise/next")
 def next_exercise():
-    candidates = [e for e in exercises if e["in_review"] or e["id"] not in attempted]
-    if not candidates:
+    if not queue:
         raise HTTPException(404, "no exercises left")
-    e = candidates[0]
-    return {k: e[k] for k in ("id", "sentence", "blank_word", "meaning_correct", "meaning_distractors", "difficulty", "in_review")}
+    e = exercises[queue[0]]
+    payload = {k: e[k] for k in ("id", "meaning_correct", "meaning_distractors", "difficulty")}
+    payload["in_review"] = e.get("in_review", False)
+    payload["sentence"] = e["sentence"].replace(e["blank_word"], "___", 1)
+    return payload
 
 
 @app.post("/exercise/{exercise_id}/answer")
 def answer(exercise_id: str, body: AnswerRequest):
-    e = next((item for item in exercises if item["id"] == exercise_id), None)
-    if e is None:
+    e = exercises.get(exercise_id)
+    if e is None or not queue or queue[0] != exercise_id:
         raise HTTPException(404, "exercise not found")
+    queue.pop(0)
     correct = grade(body.spoken_text, e["blank_word"])
-    attempted.add(e["id"])
-    e["in_review"] = not correct
     session.update(e["lemma"], correct)
     if correct:
-        feedback = "좋아요! 다음 문제로 가볼게요."
+        e["in_review"] = False
+        feedback = "Nice! Let's move on to the next one."
     else:
-        feedback = f"정답은 '{e['blank_word']}'예요. 한 번 더 복습해 볼까요?"
+        e["in_review"] = True
+        queue.insert(min(REVIEW_DELAY, len(queue)), exercise_id)
+        feedback = f"The answer is '{e['blank_word']}'. Let's review it once more."
     return {"correct": correct, "answer": e["blank_word"], "feedback": feedback}
 
 
@@ -68,7 +88,7 @@ def metrics():
 
 @app.post("/reset")
 def reset():
-    attempted.clear()
-    for e in exercises:
+    queue[:] = list(exercises.keys())
+    for e in exercises.values():
         e["in_review"] = False
     return {"status": "ok"}

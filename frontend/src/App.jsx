@@ -12,8 +12,11 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div>
-      <h1 style={{ textAlign: "center" }}>SnowVoca</h1>
+    <div className="app-shell">
+      <header className="app-header">
+        <h1>❄️ SnowVoca</h1>
+        <p className="app-subtitle">One word from your conversation — say it out loud</p>
+      </header>
       <QuizScreen />
       <CostHUD metrics={metrics} />
     </div>

@@ -2,10 +2,20 @@ import { useEffect, useState } from "react";
 import { fetchNextExercise, submitAnswer } from "./api.js";
 import { useSpeechInput } from "./useSpeechInput.js";
 
+function renderSentence(sentence) {
+  const parts = sentence.split("___");
+  return parts.map((part, i) => (
+    <span key={i}>
+      {part}
+      {i < parts.length - 1 && <span className="blank">___</span>}
+    </span>
+  ));
+}
+
 export default function QuizScreen() {
   const [exercise, setExercise] = useState(null);
   const [result, setResult] = useState(null);
-  const { listening, transcript, start, supported } = useSpeechInput();
+  const { listening, transcript, error, start, supported } = useSpeechInput();
   const [manualInput, setManualInput] = useState("");
 
   const loadNext = () => {
@@ -29,43 +39,59 @@ export default function QuizScreen() {
   };
 
   if (!exercise) {
-    return <p>더 풀 문제가 없습니다. 🎉</p>;
+    return (
+      <div className="quiz-card quiz-card--empty">
+        <p>No more exercises. 🎉</p>
+      </div>
+    );
   }
 
-  const options = [exercise.meaning_correct, ...exercise.meaning_distractors];
-
   return (
-    <div style={{ maxWidth: 480, margin: "0 auto", fontFamily: "sans-serif" }}>
-      <h2>{exercise.sentence}</h2>
+    <div className="quiz-card">
+      <p className="exercise-label">Exercise #{exercise.id}</p>
 
-      <ul>
-        {options.map((meaning) => (
-          <li key={meaning}>{meaning}</li>
-        ))}
-      </ul>
+      <h2 className="quiz-sentence">
+        “{renderSentence(exercise.sentence)}”
+      </h2>
 
-      {supported ? (
-        <button onClick={start} disabled={listening}>
-          {listening ? "듣는 중..." : "🎤 답변하기"}
+      <div className="translation-box">
+        This word means{" "}
+        <span className="translation-highlight">{exercise.meaning_correct}</span>
+      </div>
+
+      {supported && (
+        <button
+          className={`mic-button ${listening ? "mic-button--listening" : ""}`}
+          onClick={start}
+          disabled={listening}
+        >
+          🎙️ {listening ? "Listening..." : "Speak your answer"}
         </button>
-      ) : (
-        <div>
-          <input
-            value={manualInput}
-            onChange={(e) => setManualInput(e.target.value)}
-            placeholder="빈칸에 들어갈 단어를 입력하세요"
-          />
-          <button onClick={() => submit(manualInput)}>제출</button>
-        </div>
       )}
 
+      {error && <p className="mic-error">⚠️ {error}</p>}
+
+      <div className="manual-input-row" style={supported ? { marginTop: 12 } : undefined}>
+        <input
+          value={manualInput}
+          onChange={(e) => setManualInput(e.target.value)}
+          placeholder="Type the word that fills the blank"
+          onKeyDown={(e) => e.key === "Enter" && submit(manualInput)}
+        />
+        <button className="submit-button" onClick={() => submit(manualInput)}>
+          Submit
+        </button>
+      </div>
+
       {result && (
-        <div>
-          <p>
-            {result.correct ? "✅ 정답!" : `❌ 오답 (정답: ${result.answer})`}
+        <div className={`feedback-banner ${result.correct ? "feedback-banner--correct" : "feedback-banner--wrong"}`}>
+          <p className="feedback-verdict">
+            {result.correct ? "✅ Correct!" : `❌ Incorrect (answer: ${result.answer})`}
           </p>
-          {result.feedback && <p>{result.feedback}</p>}
-          <button onClick={loadNext}>다음 문제</button>
+          {result.feedback && <p className="feedback-text">{result.feedback}</p>}
+          <button className="next-button" onClick={loadNext}>
+            Next
+          </button>
         </div>
       )}
     </div>
