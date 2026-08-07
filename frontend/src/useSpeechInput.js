@@ -24,10 +24,12 @@ export function useSpeechInput() {
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = 5;
 
     recognition.onresult = (event) => {
-      setTranscript(event.results[0][0].transcript);
+      // 인식 후보 전부를 줄바꿈으로 이어 보낸다. 채점은 후보별로 이뤄진다.
+      const alternatives = Array.from(event.results[0]).map((a) => a.transcript);
+      setTranscript(alternatives.join("\n"));
     };
     recognition.onerror = (event) => {
       console.error("SpeechRecognition error:", event.error);

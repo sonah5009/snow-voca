@@ -98,6 +98,9 @@ export default function QuizScreen() {
           <p className="feedback-verdict">
             {result.correct ? "✅ Correct!" : `❌ Incorrect (answer: ${result.answer})`}
           </p>
+          {result.spokenText && (
+            <p className="feedback-text">Heard: “{result.spokenText.split("\n")[0]}”</p>
+          )}
           {result.feedback && <p className="feedback-text">{result.feedback}</p>}
           <button className="next-button" onClick={loadNext}>
             Next
