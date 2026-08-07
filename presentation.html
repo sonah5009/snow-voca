@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     :root {
       --bg: #070e1c;
@@ -358,43 +359,139 @@
 
   <!-- ───── SLIDE 6 · PRODUCT ───── -->
   <div class="slide" id="s6">
-    <div style="max-width:1020px;width:100%;">
-      <div class="label" style="text-align:center;">Product</div>
-      <h2 style="font-size:clamp(24px,3vw,40px);text-align:center;margin-bottom:10px;color:#fff;">
-        A dynamically updating vocabulary —<br>powered by an agent system
-      </h2>
-      <p style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:34px;">
-        Traditional apps use fixed lists. SnowVoca's vocabulary evolves with every conversation you have.
-      </p>
+    <div style="max-width:1040px;width:100%;">
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;">
-        <div class="glass" style="padding:26px;opacity:0.6;">
-          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--muted);margin-bottom:14px;text-decoration:line-through;">Static Vocabulary Apps</div>
-          <ul class="blist">
-            <li>Fixed word lists, manually curated</li>
-            <li>Same words for every learner</li>
-            <li>No adaptation to real speech</li>
-          </ul>
+      <!-- HEADER: title + logo placeholders -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px;">
+        <div>
+          <div class="label">Architecture</div>
+          <h2 style="font-size:clamp(19px,2.4vw,30px);color:#fff;line-height:1.25;">
+            A dynamically updating vocabulary<br>powered by an agent system
+          </h2>
         </div>
-        <div class="glass-hi" style="padding:26px;">
-          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--ice-1);margin-bottom:14px;">SnowVoca ❄</div>
-          <ul class="blist">
-            <li>Vocabulary built from <em style="color:var(--ice-1);font-style:normal;">your</em> actual speech</li>
-            <li>Cortex Agent orchestrates the learning flow</li>
-            <li>EverOS memory adapts to each learner</li>
-          </ul>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+          <!-- Snowflake logo placeholder -->
+          <div class="ph" id="logo-sf" style="width:64px;height:64px;border-radius:12px;gap:3px;padding:6px;flex-direction:column;">
+            <div style="font-size:20px;opacity:0.5;">❄</div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;line-height:1.3;">Snowflake<br>logo</div>
+          </div>
+          <div style="font-size:13px;color:var(--muted);">×</div>
+          <!-- EverOS logo placeholder -->
+          <div class="ph" id="logo-everos" style="width:64px;height:64px;border-radius:12px;gap:3px;padding:6px;flex-direction:column;">
+            <div style="font-size:20px;opacity:0.5;">🧠</div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;line-height:1.3;">EverOS<br>logo</div>
+          </div>
         </div>
       </div>
 
-      <div class="arch" style="margin-top:4px;">
-        <div class="abox in">🎙 Real Speech</div>
-        <div class="aarr">→</div>
-        <div class="abox hi">🤖 Cortex Agent</div>
-        <div class="aarr">→</div>
-        <div class="abox">📚 Your Vocabulary</div>
-        <div class="aarr">→</div>
-        <div class="abox">🧠 EverOS Memory</div>
-      </div>
+      <!-- ARCHITECTURE DIAGRAM: 3-column grid -->
+      <!-- col 1: main flow  |  col 2: connectors  |  col 3: memory layer -->
+      <div style="
+        display:grid;
+        grid-template-columns: 1fr 40px 1fr;
+        grid-template-rows: auto 16px auto 16px auto 16px auto 16px auto;
+        align-items:stretch;
+      ">
+
+        <!-- R1C1: Frontend -->
+        <div style="grid-column:1;grid-row:1;background:rgba(109,213,250,0.06);border:1px solid var(--border);border-radius:11px;padding:9px 14px;">
+          <div style="font-size:9px;color:var(--ice-2);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:2px;">Frontend</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:13px;color:#fff;">QuizScreen</div>
+          <div style="font-size:11px;color:var(--muted);">Voice → STT → Quiz answer</div>
+        </div>
+
+        <!-- R2C1: ↓ -->
+        <div style="grid-column:1;grid-row:2;display:flex;align-items:center;justify-content:center;color:rgba(109,213,250,0.45);font-size:13px;">↓</div>
+
+        <!-- R3C1: Gateway -->
+        <div style="grid-column:1;grid-row:3;background:rgba(109,213,250,0.06);border:1px solid var(--border);border-radius:11px;padding:9px 14px;">
+          <div style="font-size:9px;color:var(--ice-2);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:2px;">Gateway</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:13px;color:#fff;">FastAPI</div>
+          <div style="font-size:11px;color:var(--muted);">REST proxy · Cortex Agent 중계</div>
+        </div>
+
+        <!-- R3C2: → stores -->
+        <div style="grid-column:2;grid-row:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;">
+          <div style="font-size:9px;color:var(--muted);">stores</div>
+          <div style="font-size:15px;color:rgba(109,213,250,0.55);">→</div>
+        </div>
+
+        <!-- R3C3: session_cache -->
+        <div style="grid-column:3;grid-row:3;background:rgba(109,213,250,0.05);border:1px solid var(--border);border-radius:11px;padding:9px 14px;">
+          <div style="font-size:9px;color:var(--ice-2);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:2px;">In-memory</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:13px;color:#fff;">session_cache</div>
+          <div style="font-size:11px;color:var(--muted);">Compressed learner profile</div>
+        </div>
+
+        <!-- R4C1: ↓ -->
+        <div style="grid-column:1;grid-row:4;display:flex;align-items:center;justify-content:center;color:rgba(109,213,250,0.45);font-size:13px;">↓</div>
+
+        <!-- R5C1: Cortex Agent -->
+        <div style="grid-column:1;grid-row:5;background:rgba(109,213,250,0.12);border:1px solid rgba(109,213,250,0.35);border-radius:11px;padding:9px 14px;">
+          <div style="font-size:9px;color:var(--ice-1);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:2px;">Snowflake Cortex</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;">Cortex Agent</div>
+          <div style="font-size:11px;color:var(--muted);">Orchestration · tool calling</div>
+        </div>
+
+        <!-- R5-9 C2: MCP vertical connector -->
+        <div style="grid-column:2;grid-row:5/10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;position:relative;">
+          <div style="width:2px;height:100%;background:rgba(109,213,250,0.2);border-radius:1px;position:absolute;"></div>
+          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--bg);padding:4px 0;">
+            <div style="font-size:9px;color:var(--ice-2);letter-spacing:0.5px;writing-mode:vertical-rl;text-orientation:mixed;">MCP</div>
+            <div style="font-size:16px;color:rgba(109,213,250,0.6);">⟷</div>
+          </div>
+          <!-- arrowheads top/bottom -->
+          <div style="position:absolute;top:0;font-size:11px;color:rgba(109,213,250,0.4);">▲</div>
+          <div style="position:absolute;bottom:0;font-size:11px;color:rgba(109,213,250,0.4);">▼</div>
+        </div>
+
+        <!-- R5-9 C3: EverOS -->
+        <div style="grid-column:3;grid-row:5/10;background:rgba(109,213,250,0.07);border:1px solid rgba(109,213,250,0.3);border-radius:11px;padding:12px 14px;display:flex;flex-direction:column;gap:7px;">
+          <div>
+            <div style="font-size:9px;color:var(--ice-1);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:3px;">EverOS · SPCS</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;">Memory Layer</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center;">
+            <div style="padding:6px 10px;border-radius:8px;background:rgba(109,213,250,0.08);border:1px solid rgba(109,213,250,0.14);">
+              <div style="font-size:10px;color:var(--ice-2);font-weight:600;">Profile</div>
+              <div style="font-size:10px;color:var(--muted);">accuracy · weak_words · level</div>
+            </div>
+            <div style="padding:6px 10px;border-radius:8px;background:rgba(109,213,250,0.08);border:1px solid rgba(109,213,250,0.14);">
+              <div style="font-size:10px;color:var(--ice-2);font-weight:600;">Episodes</div>
+              <div style="font-size:10px;color:var(--muted);">Individual attempt log</div>
+            </div>
+            <div style="padding:6px 10px;border-radius:8px;background:rgba(109,213,250,0.08);border:1px solid rgba(109,213,250,0.14);">
+              <div style="font-size:10px;color:var(--ice-2);font-weight:600;">Facts</div>
+              <div style="font-size:10px;color:var(--muted);">Qualitative patterns</div>
+            </div>
+            <div style="padding:6px 10px;border-radius:8px;background:rgba(109,213,250,0.08);border:1px solid rgba(109,213,250,0.14);">
+              <div style="font-size:10px;color:var(--ice-2);font-weight:600;">Review Queue</div>
+              <div style="font-size:10px;color:var(--muted);">Spaced repetition schedule</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- R6C1: ↓ -->
+        <div style="grid-column:1;grid-row:6;display:flex;align-items:center;justify-content:center;color:rgba(109,213,250,0.45);font-size:13px;">↓</div>
+
+        <!-- R7C1: Cortex COMPLETE -->
+        <div style="grid-column:1;grid-row:7;background:rgba(109,213,250,0.06);border:1px solid var(--border);border-radius:11px;padding:9px 14px;">
+          <div style="font-size:9px;color:var(--ice-2);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:2px;">Snowflake Cortex</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:13px;color:#fff;">Cortex COMPLETE</div>
+          <div style="font-size:11px;color:var(--muted);">Batch question generation</div>
+        </div>
+
+        <!-- R8C1: ↓ -->
+        <div style="grid-column:1;grid-row:8;display:flex;align-items:center;justify-content:center;color:rgba(109,213,250,0.45);font-size:13px;">↓</div>
+
+        <!-- R9C1: word_metadata -->
+        <div style="grid-column:1;grid-row:9;background:rgba(168,237,234,0.06);border:1px solid rgba(168,237,234,0.22);border-radius:11px;padding:9px 14px;">
+          <div style="font-size:9px;color:var(--ice-1);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:2px;">Snowflake Table</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:13px;color:#fff;">word_metadata</div>
+          <div style="font-size:11px;color:var(--muted);">Lemma-level cache · shared globally</div>
+        </div>
+
+      </div><!-- /grid -->
     </div>
   </div>
 
@@ -719,21 +816,33 @@
   <div class="slide" id="s16">
     <div style="position:absolute;font-size:clamp(200px,28vw,340px);font-family:'Syne',sans-serif;font-weight:800;opacity:0.04;pointer-events:none;letter-spacing:-8px;">❄</div>
     <div style="text-align:center;z-index:1;">
-      <div class="label" style="margin-bottom:20px;">Thank you</div>
-      <h1 class="grad" style="font-size:clamp(64px,9vw,110px);letter-spacing:-3px;margin-bottom:18px;">SnowVoca</h1>
-      <p style="font-size:20px;color:var(--soft);font-weight:300;line-height:1.7;margin-bottom:50px;">
+      <div class="label" style="margin-bottom:16px;">Thank you</div>
+      <h1 class="grad" style="font-size:clamp(56px,8vw,96px);letter-spacing:-3px;margin-bottom:14px;">SnowVoca</h1>
+      <p style="font-size:18px;color:var(--soft);font-weight:300;line-height:1.7;margin-bottom:36px;">
         Learn from the English you actually hear.<br>Not from a book someone else wrote.
       </p>
-      <div style="display:flex;justify-content:center;align-items:center;gap:50px;flex-wrap:wrap;margin-bottom:36px;">
-        <div style="text-align:center;">
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:26px;" class="grad">Inseon</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:3px;">vctry.ah@gmail.com</div>
+      <div style="display:flex;justify-content:center;align-items:flex-start;gap:48px;flex-wrap:wrap;margin-bottom:28px;">
+
+        <!-- Inseon QR -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;" class="grad">Inseon</div>
+          <div style="padding:10px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);">
+            <div id="qr-inseon"></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);">linkedin.com/in/inseonhwang</div>
         </div>
-        <div style="width:1px;height:40px;background:var(--border);"></div>
-        <div style="text-align:center;">
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:26px;" class="grad">Suna</div>
-          <div style="font-size:13px;color:var(--muted);margin-top:3px;">—</div>
+
+        <div style="width:1px;height:160px;background:var(--border);align-self:center;"></div>
+
+        <!-- Suna QR -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;" class="grad">Suna</div>
+          <div style="padding:10px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);">
+            <div id="qr-suna"></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);">linkedin.com/in/sunachoe</div>
         </div>
+
       </div>
       <div style="font-size:12px;color:var(--muted);">Snowflake Cortex Agent · EverOS · Snowpark Container Services</div>
     </div>
@@ -978,6 +1087,20 @@ function drawComp() {
   ctx.fillStyle = 'rgba(106,138,164,0.7)'; ctx.font = '10px Outfit';
   ctx.fillText('Sessions →', W / 2, H - 8);
 }
+
+// ═══ QR CODES ═════════════════════════════════════
+function makeQR(elId, url) {
+  new QRCode(document.getElementById(elId), {
+    text: url,
+    width: 130,
+    height: 130,
+    colorDark: '#a8edea',
+    colorLight: '#0a1625',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+makeQR('qr-inseon', 'https://www.linkedin.com/in/inseonhwang');
+makeQR('qr-suna',   'https://www.linkedin.com/in/sunachoe');
 
 // ═══ INIT ══════════════════════════════════════════
 updateHUD();
