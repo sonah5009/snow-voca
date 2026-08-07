@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnowVoca — Real Conversations. Real Vocabulary.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070e1c;
+      --ice-1: #a8edea;
+      --ice-2: #6dd5fa;
+      --ice-3: #3a8fc4;
+      --white: #ffffff;
+      --soft: #c0d8ee;
+      --muted: #6a8aa4;
+      --border: rgba(109,213,250,0.16);
+      --card: rgba(255,255,255,0.045);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      cursor: default;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 15% 25%, rgba(25,55,110,0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 85% 75%, rgba(12,38,85,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 50% at 50% 0%,  rgba(8,26,60,0.55)  0%, transparent 55%),
+        var(--bg);
+    }
+
+    .snow-layer {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; overflow: hidden;
+    }
+    .flk {
+      position: absolute; top: -24px;
+      color: rgba(168,237,234,0.5);
+      animation: fall linear infinite;
+      user-select: none;
+    }
+    @keyframes fall {
+      to { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── SLIDE SYSTEM ── */
+    #deck { position: relative; z-index: 1; width: 100%; height: 100vh; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 52px 90px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+    .slide.active { opacity: 1; pointer-events: all; }
+
+    /* ── TYPOGRAPHY ── */
+    h1, h2, h3 { font-family: 'Syne', sans-serif; line-height: 1.1; }
+    h1 { font-weight: 800; }
+    h2 { font-weight: 700; }
+    h3 { font-weight: 600; }
+
+    .grad {
+      background: linear-gradient(130deg, var(--ice-1) 0%, var(--ice-2) 55%, #fff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── GLASS CARD ── */
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+    .glass-hi {
+      background: rgba(109,213,250,0.07);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(109,213,250,0.28);
+      border-radius: 18px;
+    }
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .ph {
+      background: rgba(109,213,250,0.04);
+      border: 2px dashed rgba(109,213,250,0.35);
+      border-radius: 16px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; color: var(--muted); text-align: center;
+    }
+    .ph-icon { font-size: 30px; opacity: 0.55; }
+    .ph-ko { font-size: 13px; line-height: 1.5; opacity: 0.8; }
+    .ph-en { font-size: 11px; opacity: 0.45; }
+
+    /* ── CHIPS ── */
+    .chip {
+      display: inline-block; padding: 4px 13px; border-radius: 20px;
+      background: rgba(109,213,250,0.09);
+      border: 1px solid rgba(109,213,250,0.22);
+      font-size: 12px; color: var(--ice-1);
+      font-family: 'Outfit', sans-serif;
+    }
+    .chip-warn {
+      background: rgba(255,200,80,0.09);
+      border-color: rgba(255,200,80,0.28);
+      color: #ffd97d;
+    }
+    .chip-ok {
+      background: rgba(100,220,160,0.09);
+      border-color: rgba(100,220,160,0.28);
+      color: #7dffc2;
+    }
+
+    /* ── BULLET LIST ── */
+    .blist { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+    .blist li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: var(--soft); line-height: 1.55; }
+    .blist li::before { content: '❄'; font-size: 11px; margin-top: 4px; flex-shrink: 0; color: var(--ice-2); }
+
+    /* ── SECTION LABEL ── */
+    .label {
+      font-family: 'Syne', sans-serif; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 3px; color: var(--ice-2);
+      margin-bottom: 12px;
+    }
+
+    /* ── TWO-COL ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; width: 100%; max-width: 1040px; align-items: center; }
+
+    /* ── QUIZ MOCKUP ── */
+    .quiz-box { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 100%; max-width: 500px; }
+    .blank { display: inline-block; width: 76px; height: 22px; border-bottom: 2px solid var(--ice-2); background: rgba(109,213,250,0.07); border-radius: 4px 4px 0 0; margin: 0 3px; vertical-align: middle; }
+    .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 18px 0; }
+    .choice { padding: 9px 14px; border-radius: 9px; background: rgba(109,213,250,0.05); border: 1px solid var(--border); color: var(--soft); font-size: 13px; font-family: 'Outfit', sans-serif; }
+    .choice.yes { background: rgba(168,237,234,0.13); border-color: var(--ice-1); color: var(--ice-1); }
+    .mic-row { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 28px; background: linear-gradient(135deg, rgba(109,213,250,0.18), rgba(168,237,234,0.07)); border: 1px solid rgba(109,213,250,0.4); color: var(--ice-1); font-size: 14px; font-family: 'Outfit', sans-serif; }
+
+    /* ── BADGES ── */
+    .badge-err { display: inline-flex; align-items: center; gap: 5px; padding: 5px 13px; border-radius: 18px; background: rgba(255,90,90,0.1); border: 1px solid rgba(255,90,90,0.28); color: #ff9191; font-size: 12px; }
+    .badge-ok  { display: inline-flex; align-items: center; gap: 5px; padding: 5px 13px; border-radius: 18px; background: rgba(80,220,160,0.1); border: 1px solid rgba(80,220,160,0.28); color: #80ffcc; font-size: 12px; }
+
+    /* ── PIPELINE ── */
+    .pipe { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 960px; }
+    .pbox { padding: 11px 18px; border-radius: 11px; background: rgba(109,213,250,0.06); border: 1px solid var(--border); font-size: 13px; text-align: center; line-height: 1.45; }
+    .pbox.in { background: rgba(109,213,250,0.14); border-color: var(--ice-2); }
+    .pbox.meta { background: rgba(168,237,234,0.07); border-color: rgba(168,237,234,0.28); }
+    .pbox.usr { background: rgba(59,143,196,0.09); border-color: rgba(59,143,196,0.28); }
+    .pbox-label { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: center; }
+    .parr { color: var(--ice-2); opacity: 0.55; font-size: 18px; }
+
+    /* ── PROFILE CARD ── */
+    .prof { background: rgba(109,213,250,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; font-family: monospace; font-size: 13px; color: var(--soft); line-height: 1.75; }
+    .pk { color: var(--ice-2); }
+    .pv { color: var(--ice-1); }
+
+    /* ── PROGRESS / NAV ── */
+    #prog { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--ice-1), var(--ice-2)); z-index: 200; transition: width 0.4s ease; border-radius: 0 2px 2px 0; }
+    #badge { position: fixed; top: 18px; right: 26px; z-index: 200; font-family: 'Syne', sans-serif; font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+    .nav { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 14px; }
+    .nb { background: rgba(109,213,250,0.09); border: 1px solid var(--border); color: var(--ice-2); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 17px; }
+    .nb:hover { background: rgba(109,213,250,0.18); border-color: var(--ice-2); color: var(--ice-1); }
+    #ctr { font-family: 'Syne', sans-serif; font-size: 12px; color: var(--muted); min-width: 52px; text-align: center; }
+
+    /* ── NOTES ── */
+    #ntoggle { position: fixed; bottom: 26px; right: 26px; z-index: 200; background: rgba(109,213,250,0.07); border: 1px solid var(--border); color: var(--muted); padding: 8px 15px; border-radius: 18px; cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 12px; transition: all 0.2s; }
+    #ntoggle:hover { background: rgba(109,213,250,0.15); color: var(--ice-1); }
+    #notes { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,10,22,0.96); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 18px 90px; z-index: 199; transform: translateY(100%); transition: transform 0.3s ease; }
+    #notes.open { transform: translateY(0); }
+    #notes h4 { font-family: 'Syne', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 2.5px; color: var(--ice-2); margin-bottom: 7px; }
+    #notes p { font-size: 14px; color: var(--soft); line-height: 1.75; max-width: 960px; }
+
+    /* ── ARCH FLOW ── */
+    .arch { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .abox { padding: 12px 18px; border-radius: 11px; background: rgba(109,213,250,0.06); border: 1px solid var(--border); font-size: 13px; text-align: center; }
+    .abox.hi { background: rgba(109,213,250,0.14); border-color: var(--ice-2); }
+    .aarr { color: var(--ice-2); opacity: 0.55; font-size: 18px; }
+
+    /* ── FORGETTING CURVE SVG ── */
+    .curve-svg text { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="bg-layer"></div>
+<div class="snow-layer" id="snowLayer"></div>
+
+<!-- HUD -->
+<div id="prog"></div>
+<div id="badge">01 / 16</div>
+
+<!-- ═══════════════════════════════════════════════
+     SLIDES
+═══════════════════════════════════════════════ -->
+<div id="deck">
+
+  <!-- ───── SLIDE 1 · TITLE ───── -->
+  <div class="slide active" id="s1">
+    <!-- deco flakes -->
+    <div style="position:absolute;top:12%;left:6%;font-size:180px;opacity:0.055;pointer-events:none;">❄</div>
+    <div style="position:absolute;bottom:8%;right:4%;font-size:240px;opacity:0.04;pointer-events:none;">❄</div>
+    <div style="position:absolute;top:28%;right:10%;font-size:70px;opacity:0.06;pointer-events:none;">✦</div>
+
+    <div style="text-align:center;">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(64px,9vw,108px);letter-spacing:-3px;line-height:1;margin-bottom:18px;">
+        <span class="grad">Snow</span><span style="color:#fff;">Voca</span>
+        <span style="display:inline-block;font-size:0.55em;margin-left:4px;color:rgba(168,237,234,0.55);animation:spin 10s linear infinite;">❄</span>
+      </div>
+      <div style="font-size:clamp(15px,1.8vw,21px);color:var(--soft);font-weight:300;letter-spacing:0.3px;margin-bottom:44px;">
+        Real Conversations. Real Vocabulary.
+      </div>
+      <div style="display:flex;gap:20px;justify-content:center;margin-bottom:20px;">
+        <div style="padding:10px 28px;border-radius:28px;background:rgba(109,213,250,0.09);border:1px solid var(--border);font-family:'Syne',sans-serif;font-weight:600;font-size:15px;color:var(--ice-1);">Inseon</div>
+        <div style="padding:10px 28px;border-radius:28px;background:rgba(109,213,250,0.09);border:1px solid var(--border);font-family:'Syne',sans-serif;font-weight:600;font-size:15px;color:var(--ice-1);">Suna</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);">From Korea · Built on Snowflake Cortex</div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 2 · PROBLEM ───── -->
+  <div class="slide" id="s2">
+    <div style="max-width:820px;width:100%;text-align:center;">
+      <div class="label">The Problem</div>
+      <h1 class="grad" style="font-size:clamp(38px,5vw,68px);margin-bottom:22px;">
+        We've studied English<br>for over a decade.
+      </h1>
+      <p style="font-size:20px;color:var(--soft);font-weight:300;line-height:1.7;margin-bottom:44px;">
+        And it's still <em style="font-style:normal;color:var(--ice-1);font-weight:600;">really, really hard</em> to hold a natural conversation.
+      </p>
+      <div style="display:flex;justify-content:center;align-items:center;gap:56px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:64px;line-height:1;" class="grad">10+</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:5px;">Years of studying</div>
+        </div>
+        <div style="width:1px;height:60px;background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:64px;line-height:1;color:#fff;">Still</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:5px;">struggling daily</div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:12%;right:8%;font-size:220px;font-family:'Syne',sans-serif;font-weight:800;opacity:0.035;pointer-events:none;">?</div>
+  </div>
+
+  <!-- ───── SLIDE 3 · CURRENT METHODS ───── -->
+  <div class="slide" id="s3">
+    <div style="max-width:1020px;width:100%;">
+      <div class="label" style="text-align:center;">How We Learn Vocabulary</div>
+      <h2 style="text-align:center;font-size:clamp(26px,3.2vw,42px);margin-bottom:38px;color:#fff;">The traditional approach</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;">
+
+        <!-- Placeholder 1 -->
+        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
+          <div class="ph" style="width:100%;height:210px;" id="img1">
+            <div class="ph-icon">📖</div>
+            <div class="ph-ko">단어장 사진</div>
+            <div class="ph-en">Vocabulary book photo</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:4px;">Vocabulary Books</div>
+            <div style="font-size:13px;color:var(--muted);">Curated word lists, handwritten notes</div>
+          </div>
+        </div>
+
+        <!-- Placeholder 2 -->
+        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
+          <div class="ph" style="width:100%;height:210px;" id="img2">
+            <div class="ph-icon">📱</div>
+            <div class="ph-ko">단어 학습 앱 스크린샷 1</div>
+            <div class="ph-en">Flashcard app screenshot</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:4px;">Flashcard Apps</div>
+            <div style="font-size:13px;color:var(--muted);">Duolingo, Anki, Quizlet…</div>
+          </div>
+        </div>
+
+        <!-- Placeholder 3 -->
+        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
+          <div class="ph" style="width:100%;height:210px;" id="img3">
+            <div class="ph-icon">📝</div>
+            <div class="ph-ko">단어 학습 앱 스크린샷 2</div>
+            <div class="ph-en">Another learning app screenshot</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:4px;">Grammar Apps</div>
+            <div style="font-size:13px;color:var(--muted);">Structured lessons and exercises</div>
+          </div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:14px;color:var(--muted);margin-top:20px;">
+        💡 To replace a placeholder: set <code style="color:var(--ice-2);">background-image: url(...)</code> on elements <code style="color:var(--ice-2)">#img1</code>, <code style="color:var(--ice-2)">#img2</code>, <code style="color:var(--ice-2)">#img3</code>
+      </p>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 4 · THE GAP (chat bubbles) ───── -->
+  <div class="slide" id="s4">
+    <div class="two-col" style="max-width:1050px;">
+      <div>
+        <div class="label">The Gap</div>
+        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
+          But real conversations<br>sound like <em style="color:var(--ice-1);font-style:normal;">this</em>
+        </h2>
+        <p style="font-size:15px;color:var(--muted);line-height:1.7;">
+          These expressions are everywhere in daily English — you almost never find them in a textbook.
+        </p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="padding:15px 20px;border-radius:16px 16px 16px 4px;background:rgba(109,213,250,0.09);border:1px solid rgba(109,213,250,0.18);font-size:15px;line-height:1.55;align-self:flex-start;max-width:88%;">
+          "Yeah, I <span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:1px 6px;border-radius:4px;font-weight:600;">barely</span> have energy to cook dinner anymore."
+        </div>
+        <div style="padding:15px 20px;border-radius:16px 16px 4px 16px;background:rgba(168,237,234,0.07);border:1px solid rgba(168,237,234,0.16);font-size:15px;line-height:1.55;align-self:flex-end;max-width:88%;">
+          "Same. I keep <span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:1px 6px;border-radius:4px;font-weight:600;">scrolling</span> until midnight."
+        </div>
+        <div style="padding:15px 20px;border-radius:16px 16px 16px 4px;background:rgba(109,213,250,0.09);border:1px solid rgba(109,213,250,0.18);font-size:15px;line-height:1.55;align-self:flex-start;max-width:88%;">
+          "I figured <span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:1px 6px;border-radius:4px;font-weight:600;">something came up</span> — <span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:1px 6px;border-radius:4px;font-weight:600;">count me in</span> next time!"
+        </div>
+        <div style="font-size:11px;color:var(--muted);text-align:right;">↑ Highlighted phrases rarely appear in vocabulary books</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 5 · SOLUTION ───── -->
+  <div class="slide" id="s5">
+    <div style="position:absolute;font-size:clamp(200px,28vw,340px);font-family:'Syne',sans-serif;font-weight:800;opacity:0.035;pointer-events:none;letter-spacing:-8px;">❄</div>
+    <div style="text-align:center;max-width:820px;z-index:1;">
+      <div class="label">Our Solution</div>
+      <h1 style="font-size:clamp(36px,5vw,62px);margin-bottom:22px;color:#fff;">
+        So we built<br>
+        <span class="grad" style="font-size:1.15em;">SnowVoca</span>
+      </h1>
+      <p style="font-size:19px;color:var(--soft);font-weight:300;line-height:1.7;margin-bottom:48px;">
+        A vocabulary app that learns from<br>
+        <strong style="color:#fff;font-weight:600;">the conversations you actually have.</strong>
+      </p>
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <span class="chip">🎙 Real speech input</span>
+        <span class="chip">🤖 LLM-powered</span>
+        <span class="chip">❄ Snowflake Cortex</span>
+        <span class="chip">🧠 Personalized memory</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 6 · PRODUCT ───── -->
+  <div class="slide" id="s6">
+    <div style="max-width:1020px;width:100%;">
+      <div class="label" style="text-align:center;">Product</div>
+      <h2 style="font-size:clamp(24px,3vw,40px);text-align:center;margin-bottom:10px;color:#fff;">
+        A dynamically updating vocabulary —<br>powered by an agent system
+      </h2>
+      <p style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:34px;">
+        Traditional apps use fixed lists. SnowVoca's vocabulary evolves with every conversation you have.
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;">
+        <div class="glass" style="padding:26px;opacity:0.6;">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--muted);margin-bottom:14px;text-decoration:line-through;">Static Vocabulary Apps</div>
+          <ul class="blist">
+            <li>Fixed word lists, manually curated</li>
+            <li>Same words for every learner</li>
+            <li>No adaptation to real speech</li>
+          </ul>
+        </div>
+        <div class="glass-hi" style="padding:26px;">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--ice-1);margin-bottom:14px;">SnowVoca ❄</div>
+          <ul class="blist">
+            <li>Vocabulary built from <em style="color:var(--ice-1);font-style:normal;">your</em> actual speech</li>
+            <li>Cortex Agent orchestrates the learning flow</li>
+            <li>EverOS memory adapts to each learner</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="arch" style="margin-top:4px;">
+        <div class="abox in">🎙 Real Speech</div>
+        <div class="aarr">→</div>
+        <div class="abox hi">🤖 Cortex Agent</div>
+        <div class="aarr">→</div>
+        <div class="abox">📚 Your Vocabulary</div>
+        <div class="aarr">→</div>
+        <div class="abox">🧠 EverOS Memory</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 7 · DEMO 1 — Recording ───── -->
+  <div class="slide" id="s7">
+    <div class="two-col" style="max-width:1020px;">
+      <div>
+        <div class="label">Demo — Step 1</div>
+        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
+          Start with<br>real speech
+        </h2>
+        <ul class="blist" style="margin-bottom:24px;">
+          <li>Record your own daily conversations directly</li>
+          <li>Or input from YouTube, TikTok, any source</li>
+          <li>Any spoken English becomes learning material</li>
+        </ul>
+        <div style="font-size:14px;color:var(--muted);padding:13px 17px;border-left:2px solid var(--ice-2);background:rgba(109,213,250,0.04);border-radius:0 8px 8px 0;line-height:1.6;">
+          "Real language is unpredictable. That's exactly why we use it."
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+        <!-- Demo video/screenshot placeholder -->
+        <div class="ph" style="width:260px;height:420px;border-radius:28px;" id="demo1">
+          <div class="ph-icon">📱</div>
+          <div class="ph-ko">데모 영상 캡처<br>두 명이 대화하는 화면<br>폰 녹음 화면</div>
+          <div class="ph-en">Demo screenshot / recording UI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 8 · DEMO 2 — Processing ───── -->
+  <div class="slide" id="s8">
+    <div style="max-width:1020px;width:100%;text-align:center;">
+      <div class="label">Demo — Step 2</div>
+      <h2 style="font-size:clamp(24px,3vw,40px);margin-bottom:10px;color:#fff;">Speech → Learning data</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto;">
+        Morpheme analysis splits speech into words. Data flows to the right place — shared or per-user.
+      </p>
+      <div class="pipe">
+        <div>
+          <div class="pbox in">"I <strong>barely</strong> have energy<br>to cook dinner."</div>
+          <div class="pbox-label">Raw speech / transcript</div>
+        </div>
+        <div class="parr">→</div>
+        <div>
+          <div class="pbox" style="background:rgba(109,213,250,0.13);border-color:var(--ice-2);">🔬 Morpheme<br>Analysis</div>
+          <div class="pbox-label">Sentence splitting</div>
+        </div>
+        <div class="parr">→</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div class="pbox meta">❄ word_metadata table<br><span style="font-size:11px;color:var(--muted);">meaning · difficulty · distractors</span></div>
+            <div class="pbox-label">Shared across all users</div>
+          </div>
+          <div>
+            <div class="pbox usr">👤 User sentence table<br><span style="font-size:11px;color:var(--muted);">sentence + blank word + context</span></div>
+            <div class="pbox-label">Per-learner storage</div>
+          </div>
+        </div>
+      </div>
+      <!-- Optional screenshot placeholder -->
+      <div style="margin-top:28px;display:flex;justify-content:center;">
+        <div class="ph" style="width:440px;height:80px;flex-direction:row;gap:14px;" id="demo2">
+          <div class="ph-icon" style="font-size:20px;">🖼</div>
+          <div class="ph-ko" style="font-size:12px;">데모 파이프라인 화면 (선택사항)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 9 · DEMO 3 — Quiz ───── -->
+  <div class="slide" id="s9">
+    <div class="two-col" style="max-width:1020px;">
+      <div>
+        <div class="label">Demo — Step 3</div>
+        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
+          Fill-in-the-blank,<br>spoken aloud
+        </h2>
+        <ul class="blist">
+          <li>Sentence shown with one word blanked</li>
+          <li>Tap the mic — speak your answer</li>
+          <li>Web Speech API converts to text, we grade it</li>
+          <li>Multiple choice visible as reference</li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:16px;">
+        <div class="quiz-box">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Exercise #14</div>
+          <div style="font-size:17px;line-height:1.65;margin-bottom:0;color:#fff;">
+            "I <span class="blank"></span> have energy to cook dinner."
+          </div>
+          <div class="choices-grid">
+            <div class="choice yes">barely ✓</div>
+            <div class="choice">hardly</div>
+            <div class="choice">usually</div>
+            <div class="choice">often</div>
+          </div>
+          <div class="mic-row">🎙 &nbsp;Speak your answer</div>
+        </div>
+        <!-- optional screenshot -->
+        <div class="ph" style="width:100%;height:72px;flex-direction:row;gap:12px;" id="demo3">
+          <div class="ph-icon" style="font-size:18px;">🖼</div>
+          <div class="ph-ko" style="font-size:12px;">앱 퀴즈 화면 스크린샷 (선택)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 10 · DEMO 4 — Review queue ───── -->
+  <div class="slide" id="s10">
+    <div style="max-width:940px;width:100%;text-align:center;">
+      <div class="label">Demo — Step 4</div>
+      <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:14px;color:#fff;">
+        Wrong answers come back
+      </h2>
+      <p style="font-size:15px;color:var(--muted);margin-bottom:36px;max-width:580px;margin-left:auto;margin-right:auto;">
+        Miss a word? It enters the review queue and returns based on the forgetting curve — sometimes immediately.
+      </p>
+      <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start;">
+        <div class="glass" style="padding:22px 28px;min-width:260px;text-align:left;">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;color:var(--muted);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">Attempt Log</div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">barely</span><span class="badge-err">✗ wrong</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">figure out</span><span class="badge-ok">✓ correct</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">barely</span><span style="font-size:11px;color:var(--ice-2);">↺ review — next</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">barely</span><span class="badge-ok">✓ correct</span></div>
+          </div>
+        </div>
+
+        <!-- Forgetting curve SVG -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <div style="font-size:12px;color:var(--muted);">Spaced repetition</div>
+          <svg width="280" height="160" viewBox="0 0 280 160" class="curve-svg">
+            <defs>
+              <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6dd5fa"/>
+                <stop offset="100%" stop-color="#a8edea" stop-opacity="0.5"/>
+              </linearGradient>
+            </defs>
+            <!-- forgotten line -->
+            <path d="M 12 22 Q 70 90 150 112 Q 195 122 278 130" fill="none" stroke="rgba(109,213,250,0.2)" stroke-width="2" stroke-dasharray="5,3"/>
+            <!-- with review -->
+            <path d="M 12 22 Q 45 75 78 92 L 78 32 Q 112 85 148 98 L 148 48 Q 195 82 228 90 L 228 52 Q 258 78 278 80" fill="none" stroke="url(#cg)" stroke-width="2.5"/>
+            <!-- verticals -->
+            <line x1="78" y1="92" x2="78" y2="32" stroke="rgba(168,237,234,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="148" y1="98" x2="148" y2="48" stroke="rgba(168,237,234,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="228" y1="90" x2="228" y2="52" stroke="rgba(168,237,234,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
+            <text x="70" y="155" fill="rgba(109,213,250,0.5)" font-size="9" text-anchor="middle">Review 1</text>
+            <text x="144" y="155" fill="rgba(109,213,250,0.5)" font-size="9" text-anchor="middle">Review 2</text>
+            <text x="222" y="155" fill="rgba(109,213,250,0.5)" font-size="9" text-anchor="middle">Review 3</text>
+            <text x="5" y="18" fill="rgba(168,237,234,0.4)" font-size="10">retention</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 11 · DEMO 5 — Qualitative pattern ───── -->
+  <div class="slide" id="s11">
+    <div class="two-col" style="max-width:1020px;">
+      <div>
+        <div class="label">Demo — Step 5</div>
+        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
+          After 5 questions:<br>qualitative patterns
+        </h2>
+        <ul class="blist">
+          <li>Generated once per session — not after every question</li>
+          <li>A lightweight LLM call summarizes the session</li>
+          <li>Surfaces patterns raw accuracy scores can't show</li>
+          <li>Displayed in-app at the end of each session</li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:'Syne',sans-serif;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Session Insights</div>
+        <div class="glass" style="padding:18px 22px;">
+          <div style="font-size:11px;color:var(--ice-2);margin-bottom:7px;">📊 Session #7 · Aug 7, 2026</div>
+          <div style="font-size:15px;color:#fff;line-height:1.6;margin-bottom:10px;">
+            "You tend to struggle with <strong style="color:var(--ice-1);">phrasal verbs</strong> — especially <em>figure out</em>, <em>turn down</em>, <em>count on</em>."
+          </div>
+          <div style="font-size:13px;color:var(--muted);">💡 Next session will focus on phrasal verbs.</div>
+        </div>
+        <div class="glass" style="padding:18px 22px;">
+          <div style="font-size:11px;color:var(--ice-2);margin-bottom:7px;">🎙 Session #6 · Aug 5, 2026</div>
+          <div style="font-size:15px;color:#fff;line-height:1.6;">
+            "STT sometimes misses <strong style="color:var(--ice-1);">past-tense endings</strong> — could be pronunciation, not just vocabulary."
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 12 · DEMO 6 — Recommendations ───── -->
+  <div class="slide" id="s12">
+    <div style="max-width:960px;width:100%;text-align:center;">
+      <div class="label">Demo — Step 6</div>
+      <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:14px;color:#fff;">
+        Next word, chosen for you
+      </h2>
+      <p style="font-size:15px;color:var(--muted);margin-bottom:34px;max-width:580px;margin-left:auto;margin-right:auto;">
+        The Cortex Agent reads your compressed learner profile to find the right difficulty word — not too easy, not overwhelming.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:22px;align-items:center;">
+        <div class="glass" style="padding:22px;text-align:left;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Your compressed profile</div>
+          <div class="prof">
+            <div><span class="pk">accuracy_rate:</span> <span class="pv">0.72</span></div>
+            <div><span class="pk">recent:</span> <span class="pv">["O","X","X"]</span></div>
+            <div><span class="pk">weak_words:</span></div>
+            <div style="padding-left:12px;"><span class="pv">feel:3, figure_out:2</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);">
+          <div style="font-size:26px;color:var(--ice-2);">→</div>
+          <div style="font-size:10px;">Cortex Agent</div>
+        </div>
+        <div class="glass" style="padding:22px;text-align:left;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Recommended next</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;"><span class="chip chip-warn">medium</span><span style="font-size:15px;color:#fff;">figure out</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span class="chip chip-warn">medium</span><span style="font-size:15px;color:#fff;">count on</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span class="chip chip-ok">easy</span><span style="font-size:15px;color:#fff;">feel</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 13 · PERF — Batch ───── -->
+  <div class="slide" id="s13">
+    <div style="max-width:1020px;width:100%;">
+      <div class="label" style="text-align:center;">Performance — Batching</div>
+      <h2 style="font-size:clamp(24px,3vw,40px);text-align:center;margin-bottom:8px;color:#fff;">
+        Process conversations, not sentences
+      </h2>
+      <p style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:32px;">
+        5 conversations, 22 sentences — without batching: <strong style="color:#ff9191;">22 calls</strong>. With batching: <strong style="color:var(--ice-1);">5 calls</strong>.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <canvas id="batchChart" width="430" height="270" style="display:block;"></canvas>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="glass" style="padding:20px 24px;">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:5px;">Individual calls</div>
+            <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:700;color:#ff9191;">22 calls</div>
+            <div style="font-size:13px;color:var(--muted);">one per sentence</div>
+          </div>
+          <div class="glass-hi" style="padding:20px 24px;">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:5px;">Batched (per conversation)</div>
+            <div class="grad" style="font-family:'Syne',sans-serif;font-size:36px;font-weight:700;">5 calls</div>
+            <div style="font-size:13px;color:var(--muted);"><strong style="color:var(--ice-1);">4.4×</strong> reduction in cost &amp; latency</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 14 · PERF — Caching ───── -->
+  <div class="slide" id="s14">
+    <div style="max-width:1020px;width:100%;">
+      <div class="label" style="text-align:center;">Performance — Word-Level Caching</div>
+      <h2 style="font-size:clamp(24px,3vw,40px);text-align:center;margin-bottom:8px;color:#fff;">
+        The more users, the smarter it gets
+      </h2>
+      <p style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:32px;">
+        Word metadata is shared globally — generated once, reused forever. Cache hit rate grows with scale.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="glass" style="padding:20px 24px;">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Cache key: word <em style="color:var(--ice-1);font-style:normal;">lemma</em></div>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:13px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--soft);">feel / feels / felt / feeling</span><span style="color:var(--ice-1);font-weight:600;">→ "feel"</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--soft);">figure out / figured</span><span style="color:var(--ice-1);font-weight:600;">→ "figure_out"</span></div>
+            </div>
+          </div>
+          <div class="glass" style="padding:16px 22px;">
+            <div style="font-size:12px;color:var(--muted);">Cache miss → generate + store</div>
+            <div style="font-size:12px;color:var(--ice-1);margin-top:5px;">Cache hit → instant, zero cost</div>
+          </div>
+          <div class="glass-hi" style="padding:16px 22px;">
+            <div style="font-size:13px;color:#fff;">As SnowVoca scales, daily English words<br>are <strong style="color:var(--ice-1);">almost always cached</strong>.</div>
+          </div>
+        </div>
+        <canvas id="cacheChart" width="430" height="270" style="display:block;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 15 · PERF — Compression ───── -->
+  <div class="slide" id="s15">
+    <div style="max-width:1020px;width:100%;">
+      <div class="label" style="text-align:center;">Performance — Profile Compression</div>
+      <h2 style="font-size:clamp(24px,3vw,40px);text-align:center;margin-bottom:8px;color:#fff;">
+        Fixed context, no matter how long you study
+      </h2>
+      <p style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:32px;">
+        Python aggregation compresses the full history into a tiny fixed-size profile — context stays flat forever.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <canvas id="compressionChart" width="430" height="270" style="display:block;"></canvas>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="font-size:12px;color:var(--muted);">Compressed profile (always the same size):</div>
+          <div class="prof">
+            <div><span class="pk">accuracy_rate:</span> <span class="pv">0.72</span></div>
+            <div><span class="pk">recent_sequence:</span> <span class="pv">["O","O","X"]</span></div>
+            <div><span class="pk">weak_word_tags:</span></div>
+            <div style="padding-left:12px;"><span class="pv">{feel:2, figure_out:1}</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">vs. raw episode log (grows forever):</div>
+          <div class="prof" style="opacity:0.45;">
+            <div style="color:var(--muted);">ex_014 | feel | correct: true</div>
+            <div style="color:var(--muted);">ex_022 | figure_out | correct: false</div>
+            <div style="color:var(--muted);">ex_031 | barely | correct: false</div>
+            <div style="color:var(--muted);">... grows with every attempt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── SLIDE 16 · CLOSING ───── -->
+  <div class="slide" id="s16">
+    <div style="position:absolute;font-size:clamp(200px,28vw,340px);font-family:'Syne',sans-serif;font-weight:800;opacity:0.04;pointer-events:none;letter-spacing:-8px;">❄</div>
+    <div style="text-align:center;z-index:1;">
+      <div class="label" style="margin-bottom:20px;">Thank you</div>
+      <h1 class="grad" style="font-size:clamp(64px,9vw,110px);letter-spacing:-3px;margin-bottom:18px;">SnowVoca</h1>
+      <p style="font-size:20px;color:var(--soft);font-weight:300;line-height:1.7;margin-bottom:50px;">
+        Learn from the English you actually hear.<br>Not from a book someone else wrote.
+      </p>
+      <div style="display:flex;justify-content:center;align-items:center;gap:50px;flex-wrap:wrap;margin-bottom:36px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:26px;" class="grad">Inseon</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:3px;">vctry.ah@gmail.com</div>
+        </div>
+        <div style="width:1px;height:40px;background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:26px;" class="grad">Suna</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:3px;">—</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);">Snowflake Cortex Agent · EverOS · Snowpark Container Services</div>
+    </div>
+  </div>
+
+</div><!-- /#deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nb" onclick="go(-1)">←</button>
+  <div id="ctr">1 / 16</div>
+  <button class="nb" onclick="go(1)">→</button>
+</div>
+
+<!-- NOTES TOGGLE -->
+<button id="ntoggle" onclick="toggleNotes()">📋 Speaker Notes &nbsp;[N]</button>
+<div id="notes">
+  <h4>Speaker Notes</h4>
+  <p id="notesBody"></p>
+</div>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+// ═══ DATA ═══════════════════════════════════════════
+const TOTAL = 16;
+let cur = 1, notesOpen = false;
+
+const NOTES = {
+  1: "Hi everyone — we're Inseon and Suna, and we're from Korea. Today we want to share something we both struggled with personally, and what we built to solve it.",
+  2: "Both of us have been studying English for over ten years. And yet the moment we try to have a natural conversation, it's still incredibly hard. We started wondering: why? Why does studying so much not translate into actually speaking well?",
+  3: "The answer starts here. This is how most people — including us — have been learning vocabulary. Vocabulary books, flashcard apps, grammar apps. These tools have thousands of words. But there's a fundamental problem.",
+  4: "When you're actually in a real conversation, you hear things like this. 'I barely have energy to cook dinner.' 'I keep scrolling until midnight.' 'Count me in.' These expressions are everywhere in daily English — and almost none of them appear in vocabulary books. The gap between what you study and what people actually say is enormous.",
+  5: "So we built SnowVoca. An English learning app that doesn't use a preset word list. Instead, it builds your vocabulary directly from real conversations — the ones you have, or the ones you hear.",
+  6: "The key insight: traditional vocabulary apps are static. SnowVoca is dynamic. Under the hood it's an LLM agent system — Snowflake's Cortex Agent orchestrates the learning flow, EverOS stores your personal memory, and the system adapts to you over time.",
+  7: "Here's how the demo works. Step one: input. You can record your own daily conversations directly in the app. Or you can input from YouTube, TikTok, anything external. Any spoken English becomes your learning material.",
+  8: "Step two: processing. The speech goes through morpheme analysis — we split it into words. Word metadata, things like meaning, difficulty, and distractor choices, go into a shared Snowflake table called word_metadata. Full sentences go into per-user storage, because those are personal.",
+  9: "Step three: the quiz. You see a sentence with one word blanked out. Tap the microphone, say the word. We use the Web Speech API to convert speech to text, then grade it. The multiple choice options are shown as reference if you need help.",
+  10: "Step four: review. If you get a word wrong, it enters the review queue. SnowVoca uses spaced repetition — you'll see that word again before you forget it. If you just missed 'barely,' it comes back almost immediately, right in the next few questions.",
+  11: "Step five: after about five questions, SnowVoca generates a qualitative pattern summary for the session. This runs once per session using a lightweight LLM call. It surfaces insights like 'you tend to struggle with phrasal verbs' — things that raw accuracy numbers simply can't tell you.",
+  12: "Step six: personalization. Before choosing your next word, the Cortex Agent reads your compressed learner profile. It sees your accuracy rate, your recent streak, your weak words — and uses all of that to recommend the right difficulty. Not too easy, not overwhelming. This is where compression becomes really important, which we'll talk about in a moment.",
+  13: "Let's talk about how we make this fast and affordable. First: batching. Instead of calling the LLM once per sentence, we group an entire conversation — four or five sentences — into one request. Five conversations, twenty-two sentences. Without batching: twenty-two LLM calls. With batching: five calls. That's a four-point-four-times reduction in both cost and latency.",
+  14: "Second: caching. Word metadata is the same for 'feel' regardless of which sentence it appears in. We cache at the word lemma level — feel, feels, felt, and feeling all map to the same cached entry in the word_metadata table. The more people use SnowVoca, the higher the cache hit rate climbs. The system gets smarter with scale, with no extra cost.",
+  15: "Third, and most important for personalization: compression. We need to tell the Cortex Agent about the learner's history — but we can't send the entire raw log. So instead, we use Python to aggregate the history into a fixed-size profile: accuracy rate, recent answer sequence, weak word counts. The raw log grows forever as you keep using the app. The compressed profile is always the same size. Context length stays flat no matter how long you've been studying with SnowVoca.",
+  16: "SnowVoca is built on a simple belief: the best way to learn a language is from the language you actually use — not from a book someone else wrote. Thank you so much for listening. We're happy to take any questions."
+};
+
+// ═══ NAVIGATION ═══════════════════════════════════
+function go(dir) {
+  const next = cur + dir;
+  if (next < 1 || next > TOTAL) return;
+  document.getElementById('s' + cur).classList.remove('active');
+  cur = next;
+  document.getElementById('s' + cur).classList.add('active');
+  updateHUD();
+  if (cur === 13) requestAnimationFrame(drawBatch);
+  if (cur === 14) requestAnimationFrame(drawCache);
+  if (cur === 15) requestAnimationFrame(drawComp);
+}
+
+function updateHUD() {
+  document.getElementById('ctr').textContent = cur + ' / ' + TOTAL;
+  document.getElementById('badge').textContent = String(cur).padStart(2,'0') + ' / ' + TOTAL;
+  document.getElementById('prog').style.width = ((cur - 1) / (TOTAL - 1) * 100) + '%';
+  if (notesOpen) document.getElementById('notesBody').textContent = NOTES[cur] || '';
+}
+
+function toggleNotes() {
+  notesOpen = !notesOpen;
+  document.getElementById('notes').classList.toggle('open', notesOpen);
+  if (notesOpen) document.getElementById('notesBody').textContent = NOTES[cur] || '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(-1); }
+  else if (e.key === 'n' || e.key === 'N') toggleNotes();
+});
+
+// ═══ SNOWFLAKES ═══════════════════════════════════
+(function spawnSnow() {
+  const layer = document.getElementById('snowLayer');
+  const syms = ['❄','❅','❆','✦','·','*'];
+  for (let i = 0; i < 32; i++) {
+    const el = document.createElement('div');
+    el.className = 'flk';
+    el.textContent = syms[Math.floor(Math.random() * syms.length)];
+    el.style.left = (Math.random() * 100) + '%';
+    el.style.fontSize = (Math.random() * 11 + 5) + 'px';
+    el.style.animationDuration = (Math.random() * 18 + 9) + 's';
+    el.style.animationDelay = (-Math.random() * 25) + 's';
+    el.style.opacity = (Math.random() * 0.38 + 0.08).toFixed(2);
+    layer.appendChild(el);
+  }
+})();
+
+// ═══ CANVAS UTILS ═════════════════════════════════
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function baseCanvas(id) {
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.fillStyle = 'rgba(109,213,250,0.03)';
+  rrect(ctx, 0, 0, c.width, c.height, 14); ctx.fill();
+  return { ctx, W: c.width, H: c.height };
+}
+
+// ── Batch Chart ──────────────────────────────────
+function drawBatch() {
+  const { ctx, W, H } = baseCanvas('batchChart');
+  const pad = { t: 36, r: 24, b: 56, l: 52 };
+  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+  const maxV = 26, data = [
+    { label: 'Individual\ncalls', v: 22, c: 'rgba(255,145,145,' },
+    { label: 'Batch\ncalls',      v:  5, c: 'rgba(109,213,250,' }
+  ];
+
+  // grid
+  ctx.font = '11px Outfit'; ctx.fillStyle = 'rgba(106,138,164,0.85)';
+  for (let v = 0; v <= maxV; v += 5) {
+    const y = pad.t + cH - (v / maxV) * cH;
+    ctx.textAlign = 'right'; ctx.fillText(v, pad.l - 8, y + 4);
+    ctx.strokeStyle = 'rgba(109,213,250,0.07)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+  }
+
+  const bW = cW / (data.length * 2.5);
+  data.forEach((d, i) => {
+    const x = pad.l + bW * (i * 2.2 + 0.6);
+    const bH = (d.v / maxV) * cH;
+    const y = pad.t + cH - bH;
+    const gr = ctx.createLinearGradient(x, y, x, y + bH);
+    gr.addColorStop(0, d.c + '0.75)'); gr.addColorStop(1, d.c + '0.18)');
+    ctx.fillStyle = gr;
+    rrect(ctx, x, y, bW * 1.4, bH, 6); ctx.fill();
+    // value
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 18px Syne'; ctx.textAlign = 'center';
+    ctx.fillText(d.v, x + bW * 0.7, y - 9);
+    // label
+    ctx.fillStyle = 'rgba(106,138,164,0.9)'; ctx.font = '11px Outfit';
+    d.label.split('\n').forEach((ln, li) => ctx.fillText(ln, x + bW * 0.7, pad.t + cH + 18 + li * 14));
+  });
+
+  ctx.fillStyle = 'rgba(168,237,234,0.55)'; ctx.font = '12px Syne'; ctx.textAlign = 'center';
+  ctx.fillText('LLM calls per 5-conversation session', W / 2, 20);
+}
+
+// ── Cache Chart ───────────────────────────────────
+function drawCache() {
+  const { ctx, W, H } = baseCanvas('cacheChart');
+  const pad = { t: 36, r: 24, b: 50, l: 50 };
+  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+
+  // grid / y-axis
+  ctx.font = '10px Outfit'; ctx.fillStyle = 'rgba(106,138,164,0.8)';
+  for (let p = 0; p <= 100; p += 25) {
+    const y = pad.t + cH - (p / 100) * cH;
+    ctx.textAlign = 'right'; ctx.fillText(p + '%', pad.l - 6, y + 4);
+    ctx.strokeStyle = 'rgba(109,213,250,0.07)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+  }
+
+  const pts = [];
+  for (let i = 0; i <= 30; i++) {
+    const rate = Math.min(85, 4 + 81 * (1 - Math.exp(-i / 7)));
+    pts.push({ x: pad.l + (i / 30) * cW, y: pad.t + cH - (rate / 100) * cH });
+  }
+
+  // fill
+  const gr = ctx.createLinearGradient(0, pad.t, 0, pad.t + cH);
+  gr.addColorStop(0, 'rgba(109,213,250,0.22)'); gr.addColorStop(1, 'rgba(109,213,250,0.02)');
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pad.t + cH);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, pad.t + cH); ctx.closePath();
+  ctx.fillStyle = gr; ctx.fill();
+
+  // line
+  ctx.beginPath(); pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle = 'rgba(109,213,250,0.9)'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  // end label
+  const last = pts[pts.length-1];
+  ctx.fillStyle = 'rgba(168,237,234,0.9)'; ctx.font = 'bold 14px Syne'; ctx.textAlign = 'right';
+  ctx.fillText('~85% hit rate', last.x - 4, last.y - 10);
+
+  ctx.fillStyle = 'rgba(168,237,234,0.55)'; ctx.font = '12px Syne'; ctx.textAlign = 'center';
+  ctx.fillText('Cache hit rate over time', W / 2, 20);
+  ctx.fillStyle = 'rgba(106,138,164,0.7)'; ctx.font = '10px Outfit';
+  ctx.fillText('Sessions / Users →', W / 2, H - 8);
+}
+
+// ── Compression Chart ─────────────────────────────
+function drawComp() {
+  const { ctx, W, H } = baseCanvas('compressionChart');
+  const pad = { t: 36, r: 28, b: 50, l: 58 };
+  const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+  const N = 20, maxTokens = 100;
+
+  // grid
+  ctx.font = '10px Outfit'; ctx.fillStyle = 'rgba(106,138,164,0.8)';
+  for (let v = 0; v <= maxTokens; v += 25) {
+    const y = pad.t + cH - (v / maxTokens) * cH;
+    ctx.textAlign = 'right'; ctx.fillText(v+'k', pad.l - 6, y + 4);
+    ctx.strokeStyle = 'rgba(109,213,250,0.07)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+  }
+
+  // raw (linear)
+  ctx.beginPath();
+  for (let i = 0; i <= N; i++) {
+    const x = pad.l + (i / N) * cW;
+    const y = pad.t + cH - (i / N) * cH;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = 'rgba(255,145,145,0.75)'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  // compressed (flat)
+  const flatY = pad.t + cH - 0.08 * cH;
+  ctx.beginPath(); ctx.moveTo(pad.l, flatY); ctx.lineTo(pad.l + cW, flatY);
+  ctx.strokeStyle = 'rgba(109,213,250,0.9)'; ctx.lineWidth = 2.5; ctx.setLineDash([7,4]); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // legend
+  ctx.font = '11px Syne'; ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(255,145,145,0.9)'; ctx.fillText('Without compression', pad.l + 5, pad.t + 20);
+  ctx.fillStyle = 'rgba(109,213,250,0.9)'; ctx.fillText('With compression', pad.l + 5, flatY - 10);
+
+  ctx.fillStyle = 'rgba(168,237,234,0.55)'; ctx.font = '12px Syne'; ctx.textAlign = 'center';
+  ctx.fillText('Context length over sessions', W / 2, 20);
+  ctx.fillStyle = 'rgba(106,138,164,0.7)'; ctx.font = '10px Outfit';
+  ctx.fillText('Sessions →', W / 2, H - 8);
+}
+
+// ═══ INIT ══════════════════════════════════════════
+updateHUD();
+</script>
+</body>
+</html>
