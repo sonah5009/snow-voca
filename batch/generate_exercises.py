@@ -1,74 +1,42 @@
-import json
-import uuid
+import os, json
+from batch.seed_data import SAMPLE_CONVERSATIONS
+from batch.static_prefix import build_static_prefix
+from batch.blank_picker import pick_blank
+from batch.word_cache import get_or_generate_word_metadata, hit_rate
+from batch.lemma import lemmatize
+from cortex.client import messages, text_of, parse_json_block
+from measure.meter import metered_call, COUNTERS
+from common.sf import exec_sql
+from dotenv import load_dotenv
+load_dotenv()
 
-from cortex_client import cheap_call
-from db import get_connection, init_db
-from seed_data import SAMPLE_CONVERSATIONS
-from word_cache import get_or_generate_word_metadata
+CHEAP  = os.environ["MODEL_CHEAP"]
+PREFIX = build_static_prefix()
 
-BATCH_PROMPT_TEMPLATE = """From this conversation, turn each sentence into a vocabulary exercise by blanking out one key word per sentence.
-
-Conversation:
-{numbered_sentences}
-
-Respond with ONLY a JSON array, one object per sentence, no other text:
-[
-  {{
-    "sentence": "the sentence with the key word replaced by ___",
-    "blank_word": "the word that was blanked out, in its original form"
-  }}
-]
-"""
-
-
-def build_batch_prompt(sentences: list) -> str:
-    numbered = "\n".join(f"{i + 1}. {s}" for i, s in enumerate(sentences))
-    return BATCH_PROMPT_TEMPLATE.format(numbered_sentences=numbered)
-
-
-def save_exercise(conn, conversation_id: str, exercise: dict) -> None:
-    word_meta = exercise["word_meta"]
-    conn.cursor().execute(
-        """INSERT INTO exercises
-           (id, conversation_id, sentence, blank_word, lemma, meaning_correct, distractors, difficulty)
-           SELECT %s, %s, %s, %s, %s, %s, PARSE_JSON(%s), %s""",
-        (
-            str(uuid.uuid4()),
-            conversation_id,
-            exercise["sentence"],
-            exercise["blank_word"],
-            word_meta["lemma"],
-            word_meta["meaning_correct"],
-            json.dumps(word_meta["distractors"], ensure_ascii=False),
-            word_meta["difficulty"],
-        ),
-    )
-    conn.commit()
-
-
-def run() -> list:
-    conn = get_connection()
-    init_db(conn)
-
-    generated = []
-    try:
-        for conv in SAMPLE_CONVERSATIONS:
-            prompt = build_batch_prompt(conv["transcript"])
-            raw = cheap_call(conn, prompt)
-            exercises = json.loads(raw)
-
-            for ex in exercises:
-                ex["word_meta"] = get_or_generate_word_metadata(ex["blank_word"], conn)
-                save_exercise(conn, conv["id"], ex)
-                generated.append(ex)
-
-                hit = "hit" if ex["word_meta"]["cache_hit"] else "miss"
-                print(f"[{conv['id']}] {ex['sentence']}  (word_cache {hit}: {ex['word_meta']['lemma']})")
-    finally:
-        conn.close()
-
-    return generated
-
+def run(run_label="ours"):
+    total = 0
+    for conv in SAMPLE_CONVERSATIONS:                     # 22문장 → 호출 5회 (레버 5)
+        body = "\n".join(f"- {s}" for s in conv["transcript"])
+        blocks = [
+            {"type": "text", "text": PREFIX,
+             "cache_control": {"type": "ephemeral"}},      # ★ 레버 3: 여기까지 캐싱
+            {"type": "text", "text": f"Input sentences:\n{body}"},
+        ]
+        resp = metered_call(run_label, "exercise_gen", CHEAP,
+                            lambda: messages(CHEAP, blocks, max_tokens=2048))
+        for i, item in enumerate(parse_json_block(text_of(resp))):
+            sent = item["sentence"]
+            blank = pick_blank(sent)                       # 레버 1: LLM 0회
+            lem = lemmatize(blank.split()[0] if " " in blank else blank)
+            meta = get_or_generate_word_metadata(blank, run_label)   # 레버 2
+            ex_id = f"{conv['id']}_{i:02d}"
+            exec_sql("""INSERT INTO exercises
+                (exercise_id, conv_id, sentence, blank_word, lemma, translation)
+                VALUES (%s,%s,%s,%s,%s,%s)""",
+                (ex_id, conv["id"], sent, blank, lem, item["translation"]))
+            total += 1
+    print(f"\n[ours] exercises={total} cache_hit_rate={hit_rate():.1%} "
+          f"llm_calls_avoided={COUNTERS['llm_calls_avoided']}")
 
 if __name__ == "__main__":
     run()
