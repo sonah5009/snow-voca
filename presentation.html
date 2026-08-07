@@ -499,73 +499,58 @@
         The language changes depending on your world
       </h2>
       <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:24px;">
-        Whether you're pitching investors, writing a thesis, or navigating office culture — the vocabulary is completely different.
+        The same person sounds completely different talking to friends, joining a team meeting, or listening to a tech podcast.
       </p>
 
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
 
-        <!-- 창업 / Startup -->
+        <!-- Friends chatting -->
         <div style="display:flex;flex-direction:column;gap:12px;">
-          <img src="assets/domain-startup.png" id="img-startup"
-               style="width:100%;height:190px;object-fit:cover;border-radius:14px;border:1px solid var(--border);"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-          <div class="ph" style="display:none;width:100%;height:190px;border-radius:14px;" id="ph-startup">
-            <div class="ph-icon">🚀</div>
-            <div class="ph-ko">GPT 이미지<br>창업 / 스타트업</div>
-            <div class="ph-en">assets/domain-startup.png</div>
-          </div>
+          <video src="assets/friends-chatting.mov" id="vid-friends"
+                 style="width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid var(--border);"
+                 autoplay muted loop playsinline></video>
           <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:8px;">🚀 Startup</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:8px;">💬 Hanging Out</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;">
-              <span class="chip" style="font-size:11px;">burn rate</span>
-              <span class="chip" style="font-size:11px;">pivot</span>
-              <span class="chip" style="font-size:11px;">runway</span>
-              <span class="chip" style="font-size:11px;">term sheet</span>
-              <span class="chip" style="font-size:11px;">cap table</span>
+              <span class="chip" style="font-size:11px;">catch up</span>
+              <span class="chip" style="font-size:11px;">hang out</span>
+              <span class="chip" style="font-size:11px;">no worries</span>
+              <span class="chip" style="font-size:11px;">for real</span>
+              <span class="chip" style="font-size:11px;">vibe</span>
             </div>
           </div>
         </div>
 
-        <!-- 회사원 / Office -->
+        <!-- Lex podcast -->
         <div style="display:flex;flex-direction:column;gap:12px;">
-          <img src="assets/domain-office.png" id="img-office"
-               style="width:100%;height:190px;object-fit:cover;border-radius:14px;border:1px solid var(--border);"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-          <div class="ph" style="display:none;width:100%;height:190px;border-radius:14px;" id="ph-office">
-            <div class="ph-icon">💼</div>
-            <div class="ph-ko">GPT 이미지<br>회사원 / 오피스</div>
-            <div class="ph-en">assets/domain-office.png</div>
-          </div>
+          <video src="assets/lex-podcast.mov" id="vid-podcast"
+                 style="width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid var(--border);"
+                 autoplay muted loop playsinline></video>
           <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:8px;">💼 Corporate</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:8px;">🎙 Podcast / Tech</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span class="chip" style="font-size:11px;">first principles</span>
+              <span class="chip" style="font-size:11px;">heuristic</span>
+              <span class="chip" style="font-size:11px;">framework</span>
+              <span class="chip" style="font-size:11px;">paradigm</span>
+              <span class="chip" style="font-size:11px;">nuance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team meeting -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <video src="assets/team-meeting.mov" id="vid-meeting"
+                 style="width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid var(--border);"
+                 autoplay muted loop playsinline></video>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:8px;">💼 Team Meeting</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;">
               <span class="chip" style="font-size:11px;">circle back</span>
-              <span class="chip" style="font-size:11px;">loop you in</span>
+              <span class="chip" style="font-size:11px;">action items</span>
               <span class="chip" style="font-size:11px;">bandwidth</span>
               <span class="chip" style="font-size:11px;">deliverable</span>
               <span class="chip" style="font-size:11px;">sync up</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 대학원생 / Grad School -->
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <img src="assets/domain-grad.png" id="img-grad"
-               style="width:100%;height:190px;object-fit:cover;border-radius:14px;border:1px solid var(--border);"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-          <div class="ph" style="display:none;width:100%;height:190px;border-radius:14px;" id="ph-grad">
-            <div class="ph-icon">🎓</div>
-            <div class="ph-ko">GPT 이미지<br>대학원생 / 연구</div>
-            <div class="ph-en">assets/domain-grad.png</div>
-          </div>
-          <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:8px;">🎓 Grad School</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;">
-              <span class="chip" style="font-size:11px;">lit review</span>
-              <span class="chip" style="font-size:11px;">peer review</span>
-              <span class="chip" style="font-size:11px;">IRB approval</span>
-              <span class="chip" style="font-size:11px;">dissertation</span>
-              <span class="chip" style="font-size:11px;">office hours</span>
             </div>
           </div>
         </div>
