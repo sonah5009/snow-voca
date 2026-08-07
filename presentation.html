@@ -733,252 +733,231 @@
 
   <!-- ───── SLIDE 7 · DEMO 1 — Recording ───── -->
   <div class="slide" id="s8">
-    <div class="two-col" style="max-width:1020px;">
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
       <div>
         <div class="label">Demo — Step 1</div>
-        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
+        <h2 style="font-size:clamp(24px,3vw,38px);margin-bottom:16px;color:#fff;">
           Start with<br>real speech
         </h2>
-        <ul class="blist" style="margin-bottom:24px;">
+        <ul class="blist" style="margin-bottom:22px;">
           <li>Record your own daily conversations directly</li>
           <li>Or input from YouTube, TikTok, any source</li>
           <li>Any spoken English becomes learning material</li>
         </ul>
-        <div style="font-size:14px;color:var(--muted);padding:13px 17px;border-left:2px solid var(--ice-2);background:rgba(109,213,250,0.04);border-radius:0 8px 8px 0;line-height:1.6;">
+        <div style="font-size:13px;color:var(--muted);padding:12px 16px;border-left:2px solid var(--ice-2);background:rgba(109,213,250,0.04);border-radius:0 8px 8px 0;line-height:1.6;">
           "Real language is unpredictable. That's exactly why we use it."
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
-        <!-- Demo video/screenshot placeholder -->
-        <div class="ph" style="width:260px;height:420px;border-radius:28px;" id="demo1">
-          <div class="ph-icon">📱</div>
-          <div class="ph-ko">데모 영상 캡처<br>두 명이 대화하는 화면<br>폰 녹음 화면</div>
-          <div class="ph-en">Demo screenshot / recording UI</div>
+      <div style="position:relative;height:500px;border-radius:22px;overflow:hidden;border:1px solid rgba(109,213,250,0.2);">
+        <div style="position:absolute;inset:0;background:rgba(109,213,250,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+          <div style="font-size:28px;opacity:0.3;">🎬</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">App demo · Step 1<br><span style="font-size:10px;opacity:0.5;">assets/demo-1.mov</span></div>
         </div>
+        <video src="assets/demo-1.mov" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;"></video>
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
       </div>
     </div>
   </div>
 
   <!-- ───── SLIDE 8 · DEMO 2 — Processing ───── -->
   <div class="slide" id="s9">
-    <div style="max-width:1020px;width:100%;text-align:center;">
-      <div class="label">Demo — Step 2</div>
-      <h2 style="font-size:clamp(24px,3vw,40px);margin-bottom:10px;color:#fff;">Speech → Learning data</h2>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto;">
-        Morpheme analysis splits speech into words. Data flows to the right place — shared or per-user.
-      </p>
-      <div class="pipe">
-        <div>
-          <div class="pbox in">"I totally <strong>zoned out</strong><br>halfway through the meeting."</div>
-          <div class="pbox-label">Raw speech / transcript</div>
-        </div>
-        <div class="parr">→</div>
-        <div>
-          <div class="pbox" style="background:rgba(109,213,250,0.13);border-color:var(--ice-2);">🔬 Morpheme<br>Analysis</div>
-          <div class="pbox-label">Sentence splitting</div>
-        </div>
-        <div class="parr">→</div>
-        <div style="display:flex;flex-direction:column;gap:14px;">
-          <div>
-            <div class="pbox meta">❄ word_metadata table<br><span style="font-size:11px;color:var(--muted);">meaning · difficulty · distractors</span></div>
-            <div class="pbox-label">Shared across all users</div>
-          </div>
-          <div>
-            <div class="pbox usr">👤 User sentence table<br><span style="font-size:11px;color:var(--muted);">sentence + blank word + context</span></div>
-            <div class="pbox-label">Per-learner storage</div>
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
+      <div>
+        <div class="label">Demo — Step 2</div>
+        <h2 style="font-size:clamp(24px,3vw,38px);margin-bottom:14px;color:#fff;">Speech →<br>Learning data</h2>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.65;">
+          Morpheme analysis splits speech into words. Data flows to the right place — shared or per-user.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="pbox in" style="font-size:12px;">"I totally <strong>zoned out</strong> halfway…"<br><span style="font-size:10px;color:var(--muted);">Raw transcript</span></div>
+          <div style="text-align:center;color:rgba(109,213,250,0.5);font-size:13px;">↓ Morpheme Analysis</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="pbox meta" style="font-size:11px;">❄ word_metadata<br><span style="color:var(--muted);">Shared globally</span></div>
+            <div class="pbox usr" style="font-size:11px;">👤 User sentences<br><span style="color:var(--muted);">Per-learner</span></div>
           </div>
         </div>
       </div>
-      <!-- Optional screenshot placeholder -->
-      <div style="margin-top:28px;display:flex;justify-content:center;">
-        <div class="ph" style="width:440px;height:80px;flex-direction:row;gap:14px;" id="demo2">
-          <div class="ph-icon" style="font-size:20px;">🖼</div>
-          <div class="ph-ko" style="font-size:12px;">데모 파이프라인 화면 (선택사항)</div>
+      <div style="position:relative;height:500px;border-radius:22px;overflow:hidden;border:1px solid rgba(109,213,250,0.2);">
+        <div style="position:absolute;inset:0;background:rgba(109,213,250,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+          <div style="font-size:28px;opacity:0.3;">🎬</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">App demo · Step 2<br><span style="font-size:10px;opacity:0.5;">assets/demo-2.mov</span></div>
         </div>
+        <video src="assets/demo-2.mov" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;"></video>
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
       </div>
     </div>
   </div>
 
   <!-- ───── SLIDE 9 · DEMO 3 — Quiz ───── -->
   <div class="slide" id="s10">
-    <div style="display:grid;grid-template-columns:5fr 6fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
-
-      <!-- LEFT: label + description + quiz mockup -->
-      <div style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
         <div>
           <div class="label">Demo — Step 3</div>
-          <h2 style="font-size:clamp(22px,2.6vw,34px);color:#fff;margin-bottom:14px;">
+          <h2 style="font-size:clamp(24px,3vw,38px);color:#fff;margin-bottom:14px;">
             Fill-in-the-blank,<br>spoken aloud
           </h2>
-          <ul class="blist">
+          <ul class="blist" style="margin-bottom:16px;">
             <li>Sentence shown with one word blanked</li>
-            <li>Korean meaning shown — blank word highlighted</li>
+            <li>Korean meaning — blank word highlighted</li>
             <li>Tap mic &amp; speak — Web Speech API grades it</li>
           </ul>
         </div>
-
-        <!-- Quiz mockup -->
-        <div class="quiz-box" style="max-width:100%;padding:22px;">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Exercise #14</div>
-
-          <!-- English sentence with blank -->
-          <div style="font-size:16px;line-height:1.75;color:#fff;margin-bottom:12px;">
-            "I totally <span class="blank" style="width:72px;"></span> halfway through the meeting."
+        <div class="quiz-box" style="padding:18px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Exercise #14</div>
+          <div style="font-size:15px;line-height:1.7;color:#fff;margin-bottom:10px;">
+            "I totally <span class="blank" style="width:68px;"></span> halfway through the meeting."
           </div>
-
-          <!-- Korean translation — blank word's meaning highlighted -->
-          <div style="font-size:14px;color:var(--muted);line-height:1.75;padding:10px 13px;background:rgba(0,0,0,0.18);border-radius:9px;margin-bottom:18px;">
-            나는 회의 도중에 완전히&nbsp;<span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:2px 9px;border-radius:5px;font-weight:600;font-size:14px;">멍해졌어</span>.
+          <div style="font-size:13px;color:var(--muted);padding:8px 12px;background:rgba(0,0,0,0.18);border-radius:8px;margin-bottom:14px;">
+            나는 회의 도중에 완전히&nbsp;<span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:1px 7px;border-radius:4px;font-weight:600;">멍해졌어</span>.
           </div>
-
           <div class="mic-row">🎙 &nbsp;Speak your answer</div>
         </div>
       </div>
-
-      <!-- RIGHT: large video panel -->
-      <div id="demo3-panel" style="
-        height: 480px;
-        border-radius: 22px;
-        background: rgba(109,213,250,0.03);
-        border: 2px dashed rgba(109,213,250,0.3);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        position: relative;
-        overflow: hidden;
-      ">
-        <!-- subtle screen-glow top -->
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);border-radius:22px 22px 0 0;"></div>
-        <div style="font-size:36px;opacity:0.35;">🎬</div>
-        <div style="font-size:15px;color:var(--muted);text-align:center;line-height:1.6;">
-          App screen recording<br>
-          <span style="font-size:12px;opacity:0.6;">Insert video here</span>
+      <div style="position:relative;height:500px;border-radius:22px;overflow:hidden;border:1px solid rgba(109,213,250,0.2);">
+        <div style="position:absolute;inset:0;background:rgba(109,213,250,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+          <div style="font-size:28px;opacity:0.3;">🎬</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">App demo · Step 3<br><span style="font-size:10px;opacity:0.5;">assets/demo-3.mov</span></div>
         </div>
-        <div style="font-size:11px;color:rgba(109,213,250,0.35);margin-top:4px;">← Insert video here</div>
-        <!-- subtle bottom glow -->
-        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);border-radius:0 0 22px 22px;"></div>
+        <video src="assets/demo-3.mov" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;"></video>
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
       </div>
-
     </div>
   </div>
 
   <!-- ───── SLIDE 10 · DEMO 4 — Review queue ───── -->
   <div class="slide" id="s11">
-    <div style="max-width:940px;width:100%;text-align:center;">
-      <div class="label">Demo — Step 4</div>
-      <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:14px;color:#fff;">
-        Wrong answers come back
-      </h2>
-      <p style="font-size:15px;color:var(--muted);margin-bottom:36px;max-width:580px;margin-left:auto;margin-right:auto;">
-        Miss a word? It enters the review queue and returns based on the forgetting curve — sometimes immediately.
-      </p>
-      <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;align-items:flex-start;">
-        <div class="glass" style="padding:22px 28px;min-width:260px;text-align:left;">
-          <div style="font-family:'Syne',sans-serif;font-size:12px;color:var(--muted);margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">Attempt Log</div>
-          <div style="display:flex;flex-direction:column;gap:11px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">zone out</span><span class="badge-err">✗ wrong</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">figure out</span><span class="badge-ok">✓ correct</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">zone out</span><span style="font-size:11px;color:var(--ice-2);">↺ review — next</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;"><span style="color:var(--soft);">zone out</span><span class="badge-ok">✓ correct</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <div class="label">Demo — Step 4</div>
+          <h2 style="font-size:clamp(24px,3vw,38px);color:#fff;margin-bottom:12px;">
+            Wrong answers<br>come back
+          </h2>
+          <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">
+            Miss a word? It enters the review queue and returns based on the forgetting curve.
+          </p>
+        </div>
+        <div class="glass" style="padding:18px 22px;">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;color:var(--muted);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase;">Attempt Log</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--soft);">zone out</span><span class="badge-err">✗ wrong</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--soft);">figure out</span><span class="badge-ok">✓ correct</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--soft);">zone out</span><span style="font-size:11px;color:var(--ice-2);">↺ review — next</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span style="color:var(--soft);">zone out</span><span class="badge-ok">✓ correct</span></div>
           </div>
         </div>
-
-        <!-- Forgetting curve SVG -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-          <div style="font-size:12px;color:var(--muted);">Spaced repetition</div>
-          <svg width="280" height="160" viewBox="0 0 280 160" class="curve-svg">
-            <defs>
-              <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#6dd5fa"/>
-                <stop offset="100%" stop-color="#a8edea" stop-opacity="0.5"/>
-              </linearGradient>
-            </defs>
-            <!-- forgotten line -->
-            <path d="M 12 22 Q 70 90 150 112 Q 195 122 278 130" fill="none" stroke="rgba(109,213,250,0.2)" stroke-width="2" stroke-dasharray="5,3"/>
-            <!-- with review -->
-            <path d="M 12 22 Q 45 75 78 92 L 78 32 Q 112 85 148 98 L 148 48 Q 195 82 228 90 L 228 52 Q 258 78 278 80" fill="none" stroke="url(#cg)" stroke-width="2.5"/>
-            <!-- verticals -->
-            <line x1="78" y1="92" x2="78" y2="32" stroke="rgba(168,237,234,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-            <line x1="148" y1="98" x2="148" y2="48" stroke="rgba(168,237,234,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-            <line x1="228" y1="90" x2="228" y2="52" stroke="rgba(168,237,234,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
-            <text x="70" y="155" fill="rgba(109,213,250,0.5)" font-size="9" text-anchor="middle">Review 1</text>
-            <text x="144" y="155" fill="rgba(109,213,250,0.5)" font-size="9" text-anchor="middle">Review 2</text>
-            <text x="222" y="155" fill="rgba(109,213,250,0.5)" font-size="9" text-anchor="middle">Review 3</text>
-            <text x="5" y="18" fill="rgba(168,237,234,0.4)" font-size="10">retention</text>
-          </svg>
+        <svg width="100%" height="110" viewBox="0 0 280 110" class="curve-svg">
+          <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6dd5fa"/><stop offset="100%" stop-color="#a8edea" stop-opacity="0.5"/></linearGradient></defs>
+          <path d="M 12 18 Q 70 70 150 88 Q 195 96 278 104" fill="none" stroke="rgba(109,213,250,0.2)" stroke-width="2" stroke-dasharray="5,3"/>
+          <path d="M 12 18 Q 45 58 78 72 L 78 24 Q 112 66 148 76 L 148 36 Q 195 64 228 70 L 228 40 Q 258 60 278 62" fill="none" stroke="url(#cg)" stroke-width="2.5"/>
+          <line x1="78" y1="72" x2="78" y2="24" stroke="rgba(168,237,234,0.3)" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="148" y1="76" x2="148" y2="36" stroke="rgba(168,237,234,0.3)" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="228" y1="70" x2="228" y2="40" stroke="rgba(168,237,234,0.3)" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="78" y="106" fill="rgba(109,213,250,0.45)" font-size="8" text-anchor="middle">R1</text>
+          <text x="148" y="106" fill="rgba(109,213,250,0.45)" font-size="8" text-anchor="middle">R2</text>
+          <text x="228" y="106" fill="rgba(109,213,250,0.45)" font-size="8" text-anchor="middle">R3</text>
+        </svg>
+      </div>
+      <div style="position:relative;height:500px;border-radius:22px;overflow:hidden;border:1px solid rgba(109,213,250,0.2);">
+        <div style="position:absolute;inset:0;background:rgba(109,213,250,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+          <div style="font-size:28px;opacity:0.3;">🎬</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">App demo · Step 4<br><span style="font-size:10px;opacity:0.5;">assets/demo-4.mov</span></div>
         </div>
+        <video src="assets/demo-4.mov" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;"></video>
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
       </div>
     </div>
   </div>
 
   <!-- ───── SLIDE 11 · DEMO 5 — Qualitative pattern ───── -->
   <div class="slide" id="s12">
-    <div class="two-col" style="max-width:1020px;">
-      <div>
-        <div class="label">Demo — Step 5</div>
-        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
-          After 5 questions:<br>qualitative patterns
-        </h2>
-        <ul class="blist">
-          <li>Generated once per session — not after every question</li>
-          <li>A lightweight LLM call summarizes the session</li>
-          <li>Surfaces patterns raw accuracy scores can't show</li>
-          <li>Displayed in-app at the end of each session</li>
-        </ul>
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <div class="label">Demo — Step 5</div>
+          <h2 style="font-size:clamp(24px,3vw,38px);color:#fff;margin-bottom:12px;">
+            After 5 questions:<br>qualitative patterns
+          </h2>
+          <ul class="blist" style="margin-bottom:16px;">
+            <li>Generated once per session</li>
+            <li>Surfaces patterns numbers can't show</li>
+            <li>Displayed in-app after each session</li>
+          </ul>
+        </div>
+        <div class="glass" style="padding:16px 20px;">
+          <div style="font-size:11px;color:var(--ice-2);margin-bottom:6px;">📊 Session #7 · Aug 7, 2026</div>
+          <div style="font-size:14px;color:#fff;line-height:1.6;margin-bottom:8px;">
+            "You struggle with <strong style="color:var(--ice-1);">phrasal verbs</strong> — especially <em>figure out</em>, <em>count on</em>."
+          </div>
+          <div style="font-size:12px;color:var(--muted);">💡 Next session: phrasal verb focus.</div>
+        </div>
+        <div class="glass" style="padding:16px 20px;">
+          <div style="font-size:11px;color:var(--ice-2);margin-bottom:6px;">🎙 Session #6 · Aug 5, 2026</div>
+          <div style="font-size:14px;color:#fff;line-height:1.6;">
+            "STT misses <strong style="color:var(--ice-1);">past-tense endings</strong> — may be pronunciation."
+          </div>
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="font-family:'Syne',sans-serif;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Session Insights</div>
-        <div class="glass" style="padding:18px 22px;">
-          <div style="font-size:11px;color:var(--ice-2);margin-bottom:7px;">📊 Session #7 · Aug 7, 2026</div>
-          <div style="font-size:15px;color:#fff;line-height:1.6;margin-bottom:10px;">
-            "You tend to struggle with <strong style="color:var(--ice-1);">phrasal verbs</strong> — especially <em>figure out</em>, <em>turn down</em>, <em>count on</em>."
-          </div>
-          <div style="font-size:13px;color:var(--muted);">💡 Next session will focus on phrasal verbs.</div>
+      <div style="position:relative;height:500px;border-radius:22px;overflow:hidden;border:1px solid rgba(109,213,250,0.2);">
+        <div style="position:absolute;inset:0;background:rgba(109,213,250,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+          <div style="font-size:28px;opacity:0.3;">🎬</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">App demo · Step 5<br><span style="font-size:10px;opacity:0.5;">assets/demo-5.mov</span></div>
         </div>
-        <div class="glass" style="padding:18px 22px;">
-          <div style="font-size:11px;color:var(--ice-2);margin-bottom:7px;">🎙 Session #6 · Aug 5, 2026</div>
-          <div style="font-size:15px;color:#fff;line-height:1.6;">
-            "STT sometimes misses <strong style="color:var(--ice-1);">past-tense endings</strong> — could be pronunciation, not just vocabulary."
-          </div>
-        </div>
+        <video src="assets/demo-5.mov" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;"></video>
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
       </div>
     </div>
   </div>
 
   <!-- ───── SLIDE 12 · DEMO 6 — Recommendations ───── -->
   <div class="slide" id="s13">
-    <div style="max-width:960px;width:100%;text-align:center;">
-      <div class="label">Demo — Step 6</div>
-      <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:14px;color:#fff;">
-        Next word, chosen for you
-      </h2>
-      <p style="font-size:15px;color:var(--muted);margin-bottom:34px;max-width:580px;margin-left:auto;margin-right:auto;">
-        The Cortex Agent reads your compressed learner profile to find the right difficulty word — not too easy, not overwhelming.
-      </p>
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:22px;align-items:center;">
-        <div class="glass" style="padding:22px;text-align:left;">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Your compressed profile</div>
-          <div class="prof">
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <div class="label">Demo — Step 6</div>
+          <h2 style="font-size:clamp(24px,3vw,38px);color:#fff;margin-bottom:12px;">
+            Next word,<br>chosen for you
+          </h2>
+          <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:16px;">
+            Cortex Agent reads your compressed profile to pick the right difficulty — not too easy, not overwhelming.
+          </p>
+        </div>
+        <div class="glass" style="padding:14px 18px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Your profile</div>
+          <div class="prof" style="font-size:12px;">
             <div><span class="pk">accuracy_rate:</span> <span class="pv">0.72</span></div>
             <div><span class="pk">recent:</span> <span class="pv">["O","X","X"]</span></div>
-            <div><span class="pk">weak_words:</span></div>
-            <div style="padding-left:12px;"><span class="pv">feel:3, figure_out:2</span></div>
+            <div><span class="pk">weak:</span> <span class="pv">feel:3, figure_out:2</span></div>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);">
-          <div style="font-size:26px;color:var(--ice-2);">→</div>
-          <div style="font-size:10px;">Cortex Agent</div>
+        <div style="display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;padding:0 4px;">
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+          <span>→ Cortex Agent</span>
+          <div style="flex:1;height:1px;background:var(--border);"></div>
         </div>
-        <div class="glass" style="padding:22px;text-align:left;">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Recommended next</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;align-items:center;gap:10px;"><span class="chip chip-warn">medium</span><span style="font-size:15px;color:#fff;">figure out</span></div>
-            <div style="display:flex;align-items:center;gap:10px;"><span class="chip chip-warn">medium</span><span style="font-size:15px;color:#fff;">count on</span></div>
-            <div style="display:flex;align-items:center;gap:10px;"><span class="chip chip-ok">easy</span><span style="font-size:15px;color:#fff;">feel</span></div>
+        <div class="glass" style="padding:14px 18px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Recommended next</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span class="chip chip-warn" style="font-size:10px;">medium</span><span style="font-size:14px;color:#fff;">figure out</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="chip chip-warn" style="font-size:10px;">medium</span><span style="font-size:14px;color:#fff;">count on</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="chip chip-ok" style="font-size:10px;">easy</span><span style="font-size:14px;color:#fff;">feel</span></div>
           </div>
         </div>
+      </div>
+      <div style="position:relative;height:500px;border-radius:22px;overflow:hidden;border:1px solid rgba(109,213,250,0.2);">
+        <div style="position:absolute;inset:0;background:rgba(109,213,250,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+          <div style="font-size:28px;opacity:0.3;">🎬</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;">App demo · Step 6<br><span style="font-size:10px;opacity:0.5;">assets/demo-6.mov</span></div>
+        </div>
+        <video src="assets/demo-6.mov" autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:22px;"></video>
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);z-index:2;"></div>
       </div>
     </div>
   </div>
