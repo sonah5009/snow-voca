@@ -12,6 +12,10 @@ export async function submitAnswer(exerciseId, spokenText) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ spoken_text: spokenText }),
   });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `submit failed (${res.status})`);
+  }
   return res.json();
 }
 

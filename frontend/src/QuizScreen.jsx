@@ -17,10 +17,12 @@ export default function QuizScreen() {
   const [result, setResult] = useState(null);
   const { listening, transcript, error, start, supported } = useSpeechInput();
   const [manualInput, setManualInput] = useState("");
+  const [submitError, setSubmitError] = useState(null);
 
   const loadNext = () => {
     setResult(null);
     setManualInput("");
+    setSubmitError(null);
     fetchNextExercise()
       .then(setExercise)
       .catch(() => setExercise(null));
@@ -33,9 +35,16 @@ export default function QuizScreen() {
   }, [transcript]);
 
   const submit = async (spokenText) => {
-    if (!exercise) return;
-    const res = await submitAnswer(exercise.id, spokenText);
-    setResult({ ...res, spokenText });
+    const text = (spokenText || "").trim();
+    if (!exercise || !text || result) return;
+    try {
+      const res = await submitAnswer(exercise.id, text);
+      setResult({ ...res, spokenText: text });
+    } catch (err) {
+      // 서버 큐와 화면이 어긋난 경우. 에러 바디를 결과로 렌더링하지 말고 다시 맞춘다.
+      loadNext();
+      setSubmitError(`Couldn't submit (${err.message}) — reloading the exercise.`);
+    }
   };
 
   if (!exercise) {
@@ -70,6 +79,7 @@ export default function QuizScreen() {
       )}
 
       {error && <p className="mic-error">⚠️ {error}</p>}
+      {submitError && <p className="mic-error">⚠️ {submitError}</p>}
 
       <div className="manual-input-row" style={supported ? { marginTop: 12 } : undefined}>
         <input

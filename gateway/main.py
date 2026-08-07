@@ -60,9 +60,12 @@ def next_exercise():
 @app.post("/exercise/{exercise_id}/answer")
 def answer(exercise_id: str, body: AnswerRequest):
     e = exercises.get(exercise_id)
-    if e is None or not queue or queue[0] != exercise_id:
+    if e is None:
         raise HTTPException(404, "exercise not found")
-    queue.pop(0)
+    # 큐 맨 앞이 아니어도 받는다. 탭 두 개·중복 제출·새로고침으로 순서가 어긋나도
+    # 데모가 404 루프에 빠지지 않도록 위치와 무관하게 제거한다.
+    if exercise_id in queue:
+        queue.remove(exercise_id)
     correct = grade(body.spoken_text, e["blank_word"])
     session.update(e["lemma"], correct)
     if correct:
