@@ -1,6 +1,7 @@
 # SnowVoca — Cortex REST API + 비용 계측 빌드 가이드
 
 ## 목표
+
 일상 대화(영어 STT 텍스트)를 입력받아 빈칸 문제를 생성하고, 음성으로 답하면 정오답을 판정하며,
 틀린 문제는 복습 큐로 넘어가는 데모를 완성한다.
 
@@ -11,6 +12,7 @@
 > 앱만 완성되고 숫자가 없으면 Track 2에서 수십 팀과 싸우게 되므로 진다.
 
 ## 하드 제약
+
 - 제출 마감 16:00 PDT (5분당 -5점). **15:55 제출**.
 - 제출 폼 필수: 팀명 / 프로젝트명 / **Team Member 1,2,3 전부 필수(1~2인이면 3번은 `N/A`)** / **Slide Deck URL(필수)** / Live Demo URL(선택)
 - 데모 3분 + 관객 투표
@@ -71,6 +73,7 @@ Cortex REST API에서는:
 배치 실행이 5분을 넘길 수 있으면 TTL을 1시간으로 둔다.
 
 프롬프트 구성 순서(캐시 히트를 극대화):
+
 ```
 [cache_control 지정 → 여기까지 캐싱]
   1. 시스템 지침 (고정)
@@ -84,25 +87,25 @@ Cortex REST API에서는:
 
 ## 비용 레버 5개 — 각각 구현 위치와 측정 방법
 
-| # | 레버 | 구현 위치 | 절감 메커니즘 | 측정 |
-|---|---|---|---|---|
-| 1 | **LLM 미사용** | `gateway/grader.py`, `batch/blank_picker.py` | 정오답 판정 = 문자열 비교. 빈칸 선정 = 규칙 기반 | `llm_calls_avoided` 카운터 |
-| 2 | **lemma 캐시** | `batch/word_cache.py` + `word_metadata` 테이블 | 단어 원형 단위 exact match. 학습자가 늘수록 히트율 상승 | 히트/미스 카운트 → 회피된 토큰 |
-| 3 | **프롬프트 캐싱** | `cortex/messages.py`의 `cache_control` | 정적 prefix를 입력 단가 10%로 | 응답 usage의 `cache_read` 토큰 |
-| 4 | **모델 라우팅** | `cortex/router.py` | 어휘 메타/문제 생성 = 저가, 오답 피드백만 고가 | 모델별 USD 분해 |
-| 5 | **배치 묶음** | `batch/generate_exercises.py` | 문장 22개 → 호출 5회 (대화 단위) | 호출 횟수 + 정적 prefix 중복 제거량 |
+| #   | 레버              | 구현 위치                                      | 절감 메커니즘                                           | 측정                                |
+| --- | ----------------- | ---------------------------------------------- | ------------------------------------------------------- | ----------------------------------- |
+| 1   | **LLM 미사용**    | `gateway/grader.py`, `batch/blank_picker.py`   | 정오답 판정 = 문자열 비교. 빈칸 선정 = 규칙 기반        | `llm_calls_avoided` 카운터          |
+| 2   | **lemma 캐시**    | `batch/word_cache.py` + `word_metadata` 테이블 | 단어 원형 단위 exact match. 학습자가 늘수록 히트율 상승 | 히트/미스 카운트 → 회피된 토큰      |
+| 3   | **프롬프트 캐싱** | `cortex/messages.py`의 `cache_control`         | 정적 prefix를 입력 단가 10%로                           | 응답 usage의 `cache_read` 토큰      |
+| 4   | **모델 라우팅**   | `cortex/router.py`                             | 어휘 메타/문제 생성 = 저가, 오답 피드백만 고가          | 모델별 USD 분해                     |
+| 5   | **배치 묶음**     | `batch/generate_exercises.py`                  | 문장 22개 → 호출 5회 (대화 단위)                        | 호출 횟수 + 정적 prefix 중복 제거량 |
 
 ### 모델 선정 (실제 단가 기준, USD per 1M tokens)
 
 `SHOW CORTEX BASE MODELS;`로 리전 가용 모델을 먼저 확인하고 아래에서 고른다.
 (구 가이드의 `SHOW MODELS IN SNOWFLAKE.CORTEX;`는 틀린 명령이다.)
 
-| 용도 | 모델 후보 | Input | Cache read | Output |
-|---|---|---|---|---|
-| 저가(어휘/문제 생성) | `claude-haiku-4-5` | $1.00 | $0.10 | $5.00 |
-| 초저가 대안(캐싱 미지원) | `llama4-maverick` | $0.24 | — | $0.97 |
-| 고가(오답 피드백) | `claude-sonnet-4-5` | $3.00 | $0.30 | $15.00 |
-| Naive 베이스라인용 | `claude-opus-4-5` | $5.00 | $0.50 | $25.00 |
+| 용도                     | 모델 후보           | Input | Cache read | Output |
+| ------------------------ | ------------------- | ----- | ---------- | ------ |
+| 저가(어휘/문제 생성)     | `claude-haiku-4-5`  | $1.00 | $0.10      | $5.00  |
+| 초저가 대안(캐싱 미지원) | `llama4-maverick`   | $0.24 | —          | $0.97  |
+| 고가(오답 피드백)        | `claude-sonnet-4-5` | $3.00 | $0.30      | $15.00 |
+| Naive 베이스라인용       | `claude-opus-4-5`   | $5.00 | $0.50      | $25.00 |
 
 > 위 수치는 Snowflake 가이드의 **예시 rate**다. 실제 값은 Service Consumption Table을 따르므로,
 > `measure/pricing.py`에 상수로 넣되 덱에는 "예시 단가 기준 추정"이라고 명시한다.
@@ -126,7 +129,9 @@ measure/
 ```
 
 ### Naive 베이스라인 정의 (이게 "before"다. 반드시 이 정의를 덱에 그대로 적어라)
+
 동일한 `SAMPLE_CONVERSATIONS` 5개 / 22문장에 대해:
+
 1. 문장 **1개당 호출 1회** (배치 없음) → 22회
 2. 모델은 전부 `claude-opus-4-5` (라우팅 없음)
 3. `cache_control` 미사용 (프롬프트 캐싱 없음)
@@ -135,9 +140,11 @@ measure/
 6. 매 호출에 학습자 시도 로그 **원본 전체**를 삽입 (압축 없음)
 
 ### Ours
+
 레버 1~5 전부 적용.
 
 ### llm_calls 원장
+
 ```sql
 CREATE TABLE IF NOT EXISTS llm_calls (
   call_id STRING,
@@ -176,6 +183,7 @@ def metered_call(run_label, stage, model, payload, conn):
 > 여기서 5분 이상 쓰지 말고, 키를 못 찾으면 `AI_COUNT_TOKENS`로 입력 토큰을 직접 세는 폴백으로 간다.
 
 ### 실시간 측정을 주 증거로, ACCOUNT_USAGE를 보조 증거로
+
 `SNOWFLAKE.ACCOUNT_USAGE.CORTEX_REST_API_USAGE_HISTORY`의 `TOKENS_GRANULAR`에
 `input` / `output` / `cache_read_input`이 들어오지만, **ACCOUNT_USAGE는 데이터가 뜨기까지 45분~3시간 지연된다.**
 데모 시점에 비어 있을 수 있으므로:
@@ -198,6 +206,7 @@ GROUP BY 1;
 ```
 
 ### report.py 출력 형태 (덱에 그대로 붙일 표)
+
 ```
                      calls   input_tok  cache_read  output_tok      USD
 naive                   22      41,800           0      12,400   $0.5200
@@ -207,6 +216,7 @@ ours                     6       3,100       8,900       2,050   $0.0361
 학습자 1인 1일 원가   naive $0.0104  →  ours $0.0007
 1,000명 × 30일        naive $312     →  ours $21      (월 $291 절감)
 ```
+
 숫자는 실측으로 채운다. **절감률 한 줄이 이 프로젝트의 제출물이다.**
 
 ---
@@ -279,9 +289,9 @@ def update_on_attempt(profile, correct: bool, word: str):
     profile["recent_sequence"] = profile["recent_sequence"][-2:] + ["O" if correct else "X"]
 ```
 
-| | 방식 | 비용 |
-|---|---|---|
-| 기본 | 코드로 카운터/리스트만 누적 | 0 |
+|            | 방식                                                      | 비용      |
+| ---------- | --------------------------------------------------------- | --------- |
+| 기본       | 코드로 카운터/리스트만 누적                               | 0         |
 | 확장(선택) | 세션 종료 시 1회 싼 모델로 질적 요약 1문장 → EverOS Facts | 아주 낮음 |
 
 ---
@@ -316,6 +326,7 @@ for conv in SAMPLE_CONVERSATIONS:                 # 22문장 → 호출 5회
 ---
 
 ## 시드 데이터 (변경 없음)
+
 ```python
 # batch/seed_data.py
 SAMPLE_CONVERSATIONS = [
@@ -354,6 +365,7 @@ SAMPLE_CONVERSATIONS = [
 ---
 
 ## 기술 스택
+
 - LLM 호출: **Cortex REST API** `POST https://<account>.snowflakecomputing.com/api/v2/cortex/v1/messages`
   (Anthropic 호환. 인증은 PAT 권장 — Snowsight → My Profile → Programmatic Access Tokens)
 - 호출 라이브러리: `httpx` 또는 `requests` 직접 사용. `anthropic` 패키지 설치 금지
@@ -364,8 +376,10 @@ SAMPLE_CONVERSATIONS = [
 - 계측: `measure/` 자체 구현. wandb 사용하지 않음
 
 ### EverOS 사용 여부 판단
+
 Evermind가 공동 호스트라 스폰서 정렬 가치가 있다. 다만 EverOS는 Python 3.12+, OpenRouter 키,
 DeepInfra 키가 필요하다.
+
 - **키가 이미 있다**: `pip install everos` → `everos init` → `everos server start` 후
   학습자 Profile/Episode/Facts 저장에만 사용. 20분 안에 안 되면 즉시 폐기.
 - **키가 없다**: EverOS를 건너뛰고 `learner_profile` / `learner_episodes` Snowflake 테이블로 대체.
@@ -415,12 +429,14 @@ snowvoca/
 ```
 
 ### CostHUD — 화면 우측 고정 패널
+
 ```
 이 세션            $0.0007
 캐시 히트율            78%
 LLM 호출 회피          42회
 Naive 대비            -93%
 ```
+
 **이 패널 하나가 "영어 학습 앱"을 "Track 1 프로젝트"로 읽히게 만든다.** 관객 투표에서 이게 결정적이다.
 `/metrics` 엔드포인트가 `llm_calls` 테이블과 캐시 카운터를 집계해서 반환하면 된다.
 
@@ -431,22 +447,28 @@ Naive 대비            -93%
 EverOS에는 학습자 개인에 관한 것만 저장한다. `word_metadata`는 전 학습자 공유 어휘 지식이라 스코프 밖이다.
 
 **Profile — 압축된 스냅샷 (세션 종료 시 갱신)**
+
 ```markdown
 - ability_level: 3
 - accuracy_rate: 0.72
 - weak_words: [feel, figure_out, fix]
 ```
+
 **Episode — 개별 시도 원본 로그**
+
 ```markdown
 - 2026-08-07T09:12:00 | ex_014 | feel | correct: true
 - 2026-08-07T09:13:10 | ex_022 | figure_out | correct: false
 ```
+
 압축 방향은 Episode(원본) → Profile(요약)이다.
 
 **Facts — 카운터로 안 잡히는 질적 패턴 (세션 종료 시 1회, 싼 모델)**
+
 ```markdown
 - 2026-08-07: "구동사(phrasal verb)에서 특히 자주 틀림 (figure out, turn down 등)"
 ```
+
 **Foresights — 시간 남을 때만.** `predicted_forget_date` 기반 복습 우선순위, 예측적 프리페치(다음에 만날
 단어의 `word_metadata`를 미리 캐싱), 레벨업 예상치. **예측적 프리페치는 캐시 히트율을 올리므로
 레버 2를 강화한다** — 여기까지 되면 덱에 한 줄 추가하되, 이것 때문에 일정을 밀지 않는다.
@@ -460,15 +482,15 @@ EverOS에는 학습자 개인에 관한 것만 저장한다. `word_metadata`는 
 
 체크포인트로 진행하되, **벽시계 시각에 도달하면 완료 여부와 무관하게 다음으로 넘어간다.**
 
-| 시각 | 게이트 | 미달 시 조치 |
-|---|---|---|
-| 13:00 | `SHOW CORTEX BASE MODELS;` + `/messages` 스모크 콜 1회 성공 + `setup.sql` 실행 | 인증 문제면 PAT 재발급. 여기서 20분 넘기면 데모 자체가 위험 |
-| 13:15 | **`baseline_naive.py` 실행 (ACCOUNT_USAGE 예열 목적)** | 미완이어도 다음으로. 단 반드시 오늘 중 1회는 돌려야 함 |
-| 14:00 | `generate_exercises.py`로 문제 22개 생성 + `word_metadata` 채워짐 + `llm_calls` 기록됨 | 캐싱(레버 3)을 빼고 레버 1·2·4·5만으로 진행 |
-| 14:30 | **`report.py`가 절감률 숫자 1개를 출력** | 여기가 마감 우선순위 1위. 미달이면 프론트를 버리고 여기에 올인 |
-| 15:00 | 프론트 QuizScreen + CostHUD 동작. **코딩 동결** | 프론트 미완이면 터미널 데모 + 스크린샷으로 전환 |
-| 15:40 | 덱 8장 완성 + 리허설 2회 | 리허설 1회로 축소 |
-| 15:55 | **제출** | 없음 |
+| 시각  | 게이트                                                                                 | 미달 시 조치                                                   |
+| ----- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 13:00 | `SHOW CORTEX BASE MODELS;` + `/messages` 스모크 콜 1회 성공 + `setup.sql` 실행         | 인증 문제면 PAT 재발급. 여기서 20분 넘기면 데모 자체가 위험    |
+| 13:15 | **`baseline_naive.py` 실행 (ACCOUNT_USAGE 예열 목적)**                                 | 미완이어도 다음으로. 단 반드시 오늘 중 1회는 돌려야 함         |
+| 14:00 | `generate_exercises.py`로 문제 22개 생성 + `word_metadata` 채워짐 + `llm_calls` 기록됨 | 캐싱(레버 3)을 빼고 레버 1·2·4·5만으로 진행                    |
+| 14:30 | **`report.py`가 절감률 숫자 1개를 출력**                                               | 여기가 마감 우선순위 1위. 미달이면 프론트를 버리고 여기에 올인 |
+| 15:00 | 프론트 QuizScreen + CostHUD 동작. **코딩 동결**                                        | 프론트 미완이면 터미널 데모 + 스크린샷으로 전환                |
+| 15:40 | 덱 8장 완성 + 리허설 2회                                                               | 리허설 1회로 축소                                              |
+| 15:55 | **제출**                                                                               | 없음                                                           |
 
 ```bash
 # 0. 스모크 + 스키마
@@ -507,13 +529,13 @@ cd frontend && npm install && npm run dev
 
 ## 데모 3분 대본
 
-| 시간 | 내용 |
-|---|---|
+| 시간      | 내용                                                                                                     |
+| --------- | -------------------------------------------------------------------------------------------------------- |
 | 0:00-0:25 | 문제: 대화형 영어 학습은 학습자 1인당 하루 추론 비용이 마진을 결정한다. Naive로 만들면 1,000명에 월 $312 |
-| 0:25-1:15 | 앱 시연: 내 어제 대화에서 나온 문장, 빈칸, 뜻 목록, 마이크로 답하기, 틀리면 복습 큐로 |
-| 1:15-1:50 | **두 번째 학습자 투입.** 캐시 히트율 0% → 78%로 오르는 CostHUD를 보여준다 |
-| 1:50-2:35 | `report.py` 라이브 실행. before/after 표와 **절감률 한 줄**. 레버 5개가 각각 얼마를 줄였는지 |
-| 2:35-3:00 | 1,000명 × 30일 투영. $312 → $21. 이게 이 앱이 흑자가 되는 조건이다 |
+| 0:25-1:15 | 앱 시연: 내 어제 대화에서 나온 문장, 빈칸, 뜻 목록, 마이크로 답하기, 틀리면 복습 큐로                    |
+| 1:15-1:50 | **두 번째 학습자 투입.** 캐시 히트율 0% → 78%로 오르는 CostHUD를 보여준다                                |
+| 1:50-2:35 | `report.py` 라이브 실행. before/after 표와 **절감률 한 줄**. 레버 5개가 각각 얼마를 줄였는지             |
+| 2:35-3:00 | 1,000명 × 30일 투영. $312 → $21. 이게 이 앱이 흑자가 되는 조건이다                                       |
 
 앱으로 시작해서 숫자로 끝낸다. 순서를 바꾸면 관객 투표에서 진다.
 
