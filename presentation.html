@@ -258,53 +258,42 @@
 
   <!-- ───── SLIDE 3 · CURRENT METHODS ───── -->
   <div class="slide" id="s3">
-    <div style="max-width:1020px;width:100%;">
+    <div style="max-width:1060px;width:100%;">
       <div class="label" style="text-align:center;">How We Learn Vocabulary</div>
-      <h2 style="text-align:center;font-size:clamp(26px,3.2vw,42px);margin-bottom:38px;color:#fff;">The traditional approach</h2>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;">
+      <h2 style="text-align:center;font-size:clamp(26px,3.2vw,42px);margin-bottom:28px;color:#fff;">The traditional approach</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
 
-        <!-- Placeholder 1 -->
-        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
-          <div class="ph" style="width:100%;height:210px;" id="img1">
-            <div class="ph-icon">📖</div>
-            <div class="ph-ko">단어장 사진</div>
-            <div class="ph-en">Vocabulary book photo</div>
-          </div>
+        <!-- voca-book.jpeg -->
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+          <img src="assets/voca-book.jpeg" id="img1"
+               style="width:100%;height:280px;object-fit:cover;border-radius:16px;border:1px solid var(--border);">
           <div style="text-align:center;">
-            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:4px;">Vocabulary Books</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:3px;">Vocabulary Books</div>
             <div style="font-size:13px;color:var(--muted);">Curated word lists, handwritten notes</div>
           </div>
         </div>
 
-        <!-- Placeholder 2 -->
-        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
-          <div class="ph" style="width:100%;height:210px;" id="img2">
-            <div class="ph-icon">📱</div>
-            <div class="ph-ko">단어 학습 앱 스크린샷 1</div>
-            <div class="ph-en">Flashcard app screenshot</div>
-          </div>
+        <!-- voca-app.jpeg -->
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+          <img src="assets/voca-app.jpeg" id="img2"
+               style="width:100%;height:280px;object-fit:cover;border-radius:16px;border:1px solid var(--border);">
           <div style="text-align:center;">
-            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:4px;">Flashcard Apps</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:3px;">Vocabulary Apps</div>
             <div style="font-size:13px;color:var(--muted);">Duolingo, Anki, Quizlet…</div>
           </div>
         </div>
 
-        <!-- Placeholder 3 -->
-        <div style="display:flex;flex-direction:column;gap:14px;align-items:center;">
-          <div class="ph" style="width:100%;height:210px;" id="img3">
-            <div class="ph-icon">📝</div>
-            <div class="ph-ko">단어 학습 앱 스크린샷 2</div>
-            <div class="ph-en">Another learning app screenshot</div>
-          </div>
+        <!-- english-test.png -->
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+          <img src="assets/english-test.png" id="img3"
+               style="width:100%;height:280px;object-fit:cover;border-radius:16px;border:1px solid var(--border);">
           <div style="text-align:center;">
-            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:4px;">Grammar Apps</div>
-            <div style="font-size:13px;color:var(--muted);">Structured lessons and exercises</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:600;font-size:15px;margin-bottom:3px;">English Tests</div>
+            <div style="font-size:13px;color:var(--muted);">Exams, TOEIC, TOEFL…</div>
           </div>
         </div>
+
       </div>
-      <p style="text-align:center;font-size:14px;color:var(--muted);margin-top:20px;">
-        💡 To replace a placeholder: set <code style="color:var(--ice-2);">background-image: url(...)</code> on elements <code style="color:var(--ice-2)">#img1</code>, <code style="color:var(--ice-2)">#img2</code>, <code style="color:var(--ice-2)">#img3</code>
-      </p>
     </div>
   </div>
 
@@ -565,39 +554,66 @@
 
   <!-- ───── SLIDE 9 · DEMO 3 — Quiz ───── -->
   <div class="slide" id="s9">
-    <div class="two-col" style="max-width:1020px;">
-      <div>
-        <div class="label">Demo — Step 3</div>
-        <h2 style="font-size:clamp(26px,3.2vw,42px);margin-bottom:18px;color:#fff;">
-          Fill-in-the-blank,<br>spoken aloud
-        </h2>
-        <ul class="blist">
-          <li>Sentence shown with one word blanked</li>
-          <li>Tap the mic — speak your answer</li>
-          <li>Web Speech API converts to text, we grade it</li>
-          <li>Multiple choice visible as reference</li>
-        </ul>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:16px;">
-        <div class="quiz-box">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Exercise #14</div>
-          <div style="font-size:17px;line-height:1.65;margin-bottom:0;color:#fff;">
-            "I totally <span class="blank"></span> halfway through the meeting."
+    <div style="display:grid;grid-template-columns:5fr 6fr;gap:36px;max-width:1060px;width:100%;align-items:center;">
+
+      <!-- LEFT: label + description + quiz mockup -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div class="label">Demo — Step 3</div>
+          <h2 style="font-size:clamp(22px,2.6vw,34px);color:#fff;margin-bottom:14px;">
+            Fill-in-the-blank,<br>spoken aloud
+          </h2>
+          <ul class="blist">
+            <li>Sentence shown with one word blanked</li>
+            <li>Korean meaning shown — blank word highlighted</li>
+            <li>Tap mic &amp; speak — Web Speech API grades it</li>
+          </ul>
+        </div>
+
+        <!-- Quiz mockup -->
+        <div class="quiz-box" style="max-width:100%;padding:22px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Exercise #14</div>
+
+          <!-- English sentence with blank -->
+          <div style="font-size:16px;line-height:1.75;color:#fff;margin-bottom:12px;">
+            "I totally <span class="blank" style="width:72px;"></span> halfway through the meeting."
           </div>
-          <div class="choices-grid">
-            <div class="choice yes">zoned out ✓</div>
-            <div class="choice">spaced out</div>
-            <div class="choice">dozed off</div>
-            <div class="choice">checked out</div>
+
+          <!-- Korean translation — blank word's meaning highlighted -->
+          <div style="font-size:14px;color:var(--muted);line-height:1.75;padding:10px 13px;background:rgba(0,0,0,0.18);border-radius:9px;margin-bottom:18px;">
+            나는 회의 도중에 완전히&nbsp;<span style="background:rgba(109,213,250,0.22);color:var(--ice-1);padding:2px 9px;border-radius:5px;font-weight:600;font-size:14px;">멍해졌어</span>.
           </div>
+
           <div class="mic-row">🎙 &nbsp;Speak your answer</div>
         </div>
-        <!-- optional screenshot -->
-        <div class="ph" style="width:100%;height:72px;flex-direction:row;gap:12px;" id="demo3">
-          <div class="ph-icon" style="font-size:18px;">🖼</div>
-          <div class="ph-ko" style="font-size:12px;">앱 퀴즈 화면 스크린샷 (선택)</div>
-        </div>
       </div>
+
+      <!-- RIGHT: large video panel -->
+      <div id="demo3-panel" style="
+        height: 480px;
+        border-radius: 22px;
+        background: rgba(109,213,250,0.03);
+        border: 2px dashed rgba(109,213,250,0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        position: relative;
+        overflow: hidden;
+      ">
+        <!-- subtle screen-glow top -->
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);border-radius:22px 22px 0 0;"></div>
+        <div style="font-size:36px;opacity:0.35;">🎬</div>
+        <div style="font-size:15px;color:var(--muted);text-align:center;line-height:1.6;">
+          앱 화면 녹화 영상<br>
+          <span style="font-size:12px;opacity:0.6;">App screen recording</span>
+        </div>
+        <div style="font-size:11px;color:rgba(109,213,250,0.35);margin-top:4px;">← 여기에 영상 삽입</div>
+        <!-- subtle bottom glow -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(109,213,250,0.4),transparent);border-radius:0 0 22px 22px;"></div>
+      </div>
+
     </div>
   </div>
 
@@ -882,7 +898,7 @@ const NOTES = {
   6: "The key insight: traditional vocabulary apps are static. SnowVoca is dynamic. Under the hood it's an LLM agent system — Snowflake's Cortex Agent orchestrates the learning flow, EverOS stores your personal memory, and the system adapts to you over time.",
   7: "Here's how the demo works. Step one: input. You can record your own daily conversations directly in the app. Or you can input from YouTube, TikTok, anything external. Any spoken English becomes your learning material.",
   8: "Step two: processing. The speech goes through morpheme analysis — we split it into words. Word metadata, things like meaning, difficulty, and distractor choices, go into a shared Snowflake table called word_metadata. Full sentences go into per-user storage, because those are personal.",
-  9: "Step three: the quiz. You see a sentence with one word blanked out. Tap the microphone, say the word. We use the Web Speech API to convert speech to text, then grade it. The multiple choice options are shown as reference if you need help.",
+  9: "Step three: the quiz. You see a sentence with one word blanked out — and directly below it, a Korean translation where the missing word's meaning is highlighted. So you know what you're being asked, but you still have to produce the English word yourself. Tap the microphone, speak your answer, and we grade it using the Web Speech API.",
   10: "Step four: review. If you get a word wrong, it enters the review queue. SnowVoca uses spaced repetition — you'll see that word again before you forget it. If you just missed 'zone out,' it comes back almost immediately, right in the next few questions.",
   11: "Step five: after about five questions, SnowVoca generates a qualitative pattern summary for the session. This runs once per session using a lightweight LLM call. It surfaces insights like 'you tend to struggle with phrasal verbs' — things that raw accuracy numbers simply can't tell you.",
   12: "Step six: personalization. Before choosing your next word, the Cortex Agent reads your compressed learner profile. It sees your accuracy rate, your recent streak, your weak words — and uses all of that to recommend the right difficulty. Not too easy, not overwhelming. This is where compression becomes really important, which we'll talk about in a moment.",
