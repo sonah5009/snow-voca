@@ -10,7 +10,7 @@ from common.sf import exec_sql
 from dotenv import load_dotenv
 load_dotenv()
 
-CHEAP  = os.environ["MODEL_CHEAP"]
+CHEAP  = os.getenv("MODEL_CHEAP", "claude-haiku-4-5")
 PREFIX = build_static_prefix()
 
 def run(run_label="ours"):
@@ -33,7 +33,7 @@ def run(run_label="ours"):
             exec_sql("""INSERT INTO exercises
                 (exercise_id, conv_id, sentence, blank_word, lemma, translation)
                 VALUES (%s,%s,%s,%s,%s,%s)""",
-                (ex_id, conv["id"], sent, blank, lem, item["translation"]))
+                (ex_id, conv["id"], sent, blank, lem, item.get("translation", "")))
             total += 1
     print(f"\n[ours] exercises={total} cache_hit_rate={hit_rate():.1%} "
           f"llm_calls_avoided={COUNTERS['llm_calls_avoided']}")

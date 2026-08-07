@@ -23,7 +23,41 @@ def build_static_prefix() -> str:
     ex = "\n\n".join(
         f'Example {i}:\nInput: {s}\nOutput: {{"sentence": "{s}", "translation": "{k}"}}'
         for i, (s, k) in enumerate(FEWSHOT, 1))
-    return f"{SCHEMA}\n\nWorked examples:\n\n{ex}\n\nNow process the input sentences below."
+    guidance = """
+Quality rules for every translation:
+- Preserve the meaning, tense, speaker intention, and level of certainty.
+- Use a natural Korean sentence that a learner would actually hear in conversation.
+- Keep names, numbers, time expressions, and concrete objects accurate.
+- Translate common phrasal verbs as one unit: figure out means 알아내다, stay home means 집에 있다,
+  look at means 살펴보다, count me in means 나도 함께할게.
+- Do not invent a subject, event, emotion, or reason that is absent from the English sentence.
+- Keep contractions and conversational tone natural in Korean.
+- If the sentence is a question, preserve the question form and politeness.
+- If the sentence is a response, preserve whether it agrees, refuses, confirms, or changes topic.
+- Output one object for every input line and preserve the input order exactly.
+- Copy each original sentence character-for-character into the sentence field.
+- Never output a blank, a null value, a markdown fence, or explanatory prose.
+
+The generated exercises are used by an English learner. A good translation is short enough to read on
+a phone, faithful enough to teach vocabulary, and natural enough to say aloud. Prefer ordinary spoken
+Korean over dictionary glosses. For example, “I barely have energy to cook dinner” should communicate
+that the speaker has almost no energy left, not merely that cooking dinner is difficult. “That sounds
+great, count me in” should communicate enthusiastic participation. “I was about to when you called”
+should preserve the interrupted intention and past timing. These examples define the quality bar for
+all outputs, even when a sentence is not included in the worked examples above.
+
+Additional translation checks: distinguish “not yet” from “never”; distinguish “might” from a firm
+plan; distinguish “should” advice from a command; preserve whether “barely” means almost not at all;
+preserve “already”, “still”, “just”, “yet”, and “until” whenever they appear. Keep the learner-facing
+translation free of academic terminology. “I figured something happened” is a natural inference,
+not a statement that the speaker calculated a number. “No rush” is reassurance that there is no need
+to hurry. “Would you like that with oat milk or regular?” is a service interaction, so Korean honorifics
+are appropriate. “I’ll just find a seat” expresses a small, immediate action and should remain casual.
+When an English sentence has an idiom or phrasal verb, translate its meaning in context rather than
+translating each word independently. These rules are part of the fixed generator contract and must be
+followed for every batch request.
+"""
+    return f"{SCHEMA}\n\nWorked examples:\n\n{ex}\n{guidance}\nNow process the input sentences below."
 
 if __name__ == "__main__":
     p = build_static_prefix()

@@ -36,7 +36,7 @@ def record(run_label, stage, model, u, cost):
         "cache_write_tokens": u["cache_write"], "output_tokens": u["output"],
         "usd": cost, "created_at": datetime.datetime.utcnow().isoformat(),
     }
-    with LEDGER.open("a") as f:
+    with LEDGER.open("a", encoding="utf-8") as f:
         f.write(json.dumps(row) + "\n")
     exec_sql("""INSERT INTO llm_calls
         (call_id, run_label, stage, model, input_tokens, cache_read_tokens,

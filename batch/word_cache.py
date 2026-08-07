@@ -4,7 +4,7 @@ from common.sf import exec_sql
 from cortex.client import messages, text_of, parse_json_block
 from measure.meter import metered_call, COUNTERS
 
-CHEAP = os.environ["MODEL_CHEAP"]
+CHEAP = os.getenv("MODEL_CHEAP", "claude-haiku-4-5")
 _MEM = {}   # SQL이 죽어도 세션 내 캐시는 동작해야 한다
 
 WORD_PROMPT = """Return ONLY JSON for the English word or phrase below.

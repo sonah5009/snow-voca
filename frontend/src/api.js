@@ -19,3 +19,8 @@ export async function fetchLearnerLevel() {
   const res = await fetch(`${BASE_URL}/learner/level`);
   return res.json();
 }
+
+export async function fetchMetrics() {
+  const res = await fetch(`${BASE_URL}/metrics`);
+  return res.json();
+}

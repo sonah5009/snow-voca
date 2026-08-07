@@ -13,7 +13,7 @@ from measure.meter import metered_call
 from dotenv import load_dotenv
 load_dotenv()
 
-NAIVE = os.environ["MODEL_NAIVE"]
+NAIVE = os.getenv("MODEL_NAIVE", "claude-opus-4-5")
 
 PROMPT = """You are an English learning content generator for Korean learners.
 Given one English sentence, do all of the following and return ONLY JSON:
